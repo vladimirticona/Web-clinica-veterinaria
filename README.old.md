@@ -1,3 +1,0 @@
-# Web-clinica-veterinaria
-Este proyecto consiste en el desarrollo de una página web para la gestión integral de una clínica veterinaria, con el propósito de optimizar la organización interna y mejorar la atención a los clientes. La aplicación permite registrar y administrar mascotas, propietarios, citas, historiales médicos y personal veterinario, centralizando toda la información en una plataforma accesible y fácil de usar. Mediante el uso de tecnologías web modernas, el sistema busca reducir tareas manuales, agilizar los procesos administrativos y ofrecer una experiencia más eficiente tanto para el personal de la clínica como para los dueños de las mascotas.
-
