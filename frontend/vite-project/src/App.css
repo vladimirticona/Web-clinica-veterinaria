@@ -11,6 +11,143 @@ body {
   padding: 20px;
 }
 
+/* ============================================
+   ESTILOS LOGIN
+   ============================================ */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.login-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.login-header h1 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.login-header p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.login-form {
+  padding: 30px 20px;
+}
+
+.login-form h2 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.login-form input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.btn-login,
+.btn-register {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.btn-login:hover:not(:disabled),
+.btn-register:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-login:disabled,
+.btn-register:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggle-form {
+  text-align: center;
+  color: #666;
+  margin-top: 15px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.link-button:hover {
+  color: #764ba2;
+}
+
+.credentials-info {
+  background: #f0f4ff;
+  border: 2px solid #e0e8ff;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.credentials-info p {
+  margin: 5px 0;
+}
+
+.credentials-info strong {
+  color: #667eea;
+}
+
+/* ============================================
+   ESTILOS PRINCIPAL
+   ============================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,18 +160,47 @@ body {
 header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 40px 20px;
-  text-align: center;
+  padding: 30px 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  margin: 0;
 }
 
-header p {
-  font-size: 1.1rem;
-  opacity: 0.9;
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: white;
+  color: #667eea;
 }
 
 .error-message {
@@ -93,18 +259,18 @@ button {
   transition: all 0.3s ease;
 }
 
-.form-section button {
+.form-section > button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   grid-column: 1 / -1;
 }
 
-.form-section button:hover:not(:disabled) {
+.form-section > button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
 }
 
-.form-section button:disabled {
+.form-section > button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -236,7 +402,23 @@ button {
 /* Responsive */
 @media (max-width: 768px) {
   header h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .user-info span,
+  .btn-logout {
+    width: 100%;
+    text-align: center;
   }
 
   .input-group {
@@ -247,7 +429,7 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .form-section button {
+  .form-section > button {
     grid-column: 1;
   }
 }
