@@ -1,14 +1,13 @@
 /**
- * Este es App.jsx
  * @fileoverview Componente principal con Dashboard, Reportes y React Icons
  * @description Incluye login, dashboard con sidebar y gestión completa
- * @version 2.1.0
+ * @version 3.0.0
  * @author dev.ticma
  */
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FaUsers, FaCalendar, FaShoppingBag, FaChartBar, FaCog, FaDoorOpen, FaUserMd, FaSignInAlt, FaUserPlus, FaPlus, FaBars, FaChartLine } from 'react-icons/fa';
+import { FaUsers, FaCalendar, FaShoppingBag, FaChartBar, FaCog, FaDoorOpen, FaUserMd, FaSignInAlt, FaUserPlus, FaPlus, FaBars, FaChartLine, FaPaw, FaUser, FaPhone, FaEnvelope, FaVenusMars, FaDog, FaCat } from 'react-icons/fa';
 import "./Dashboard.css";
 
 const BASE_URL = "http://127.0.0.1:3000";
@@ -26,12 +25,22 @@ const App = () => {
   const [regPasswordConfirm, setRegPasswordConfirm] = useState("");
 
   const [seccionActual, setSeccionActual] = useState("pacientes");
-  const [items, setItems] = useState([]);
-  const [newNombrem, setNewNombrem] = useState("");
-  const [newRaza, setNewRaza] = useState("");
-  const [newNombred, setNewNombred] = useState("");
+  const [mascotas, setMascotas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Nuevos estados para formulario de mascota
+  const [nuevaMascota, setNuevaMascota] = useState({
+    nombre: "",
+    especie: "",
+    edad: "",
+    sexo: ""
+  });
+  const [nuevoDueño, setNuevoDueño] = useState({
+    nombre_completo: "",
+    telefono: "",
+    email: ""
+  });
 
   const [editNombre, setEditNombre] = useState(usuario?.nombre_completo || "");
   const [editEmail, setEditEmail] = useState(usuario?.email || "");
@@ -40,36 +49,58 @@ const App = () => {
   const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
   const [modoEdicion, setModoEdicion] = useState(false);
 
+  // Estados para reportes
+  const [estadisticas, setEstadisticas] = useState(null);
+
   useEffect(() => {
     if (token) {
       const storedUser = localStorage.getItem("usuario");
       if (storedUser) {
         setUsuario(JSON.parse(storedUser));
-        fetchPacientes();
+        fetchMascotas();
+        if (seccionActual === "reportes") {
+          fetchEstadisticas();
+        }
       }
     }
-  }, [token]);
+  }, [token, seccionActual]);
 
-  const fetchPacientes = () => {
+  const fetchMascotas = () => {
     setLoading(true);
     setError("");
     axios
-      .get(`${BASE_URL}/pacientes`, {
+      .get(`${BASE_URL}/mascotas`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((response) => {
-        setItems(response.data);
+        setMascotas(response.data);
       })
       .catch((error) => {
-        setError("Error al obtener los pacientes");
+        setError("Error al obtener las mascotas");
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const handleCreate = () => {
-    if (!newNombrem.trim() || !newRaza.trim() || !newNombred.trim()) {
+  const fetchEstadisticas = () => {
+    axios
+      .get(`${BASE_URL}/reportes/estadisticas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((response) => {
+        setEstadisticas(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener estadísticas:", error);
+      });
+  };
+
+  const handleCreateMascota = () => {
+    const { nombre, especie, edad, sexo } = nuevaMascota;
+    const { nombre_completo, telefono, email } = nuevoDueño;
+
+    if (!nombre || !especie || !edad || !sexo || !nombre_completo || !telefono || !email) {
       setError("Todos los campos son requeridos");
       return;
     }
@@ -78,92 +109,89 @@ const App = () => {
     setError("");
     axios
       .post(
-        `${BASE_URL}/pacientes/add`,
+        `${BASE_URL}/mascotas/add`,
         {
-          nombre_mascota: newNombrem,
-          raza: newRaza,
-          nombre_dueño: newNombred
+          nombre,
+          especie,
+          edad: parseInt(edad),
+          sexo,
+          nombre_dueño: nombre_completo,
+          telefono,
+          email
         },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       )
       .then((response) => {
-        setItems((prevItems) => [...prevItems, response.data]);
-        setNewNombrem("");
-        setNewRaza("");
-        setNewNombred("");
+        fetchMascotas(); // Recargar la lista
+        // Resetear formularios
+        setNuevaMascota({ nombre: "", especie: "", edad: "", sexo: "" });
+        setNuevoDueño({ nombre_completo: "", telefono: "", email: "" });
       })
       .catch((error) => {
-        setError("Error al crear el paciente");
+        setError(error.response?.data?.error || "Error al crear la mascota");
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este paciente?")) {
+  const handleDeleteMascota = (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta mascota?")) {
       return;
     }
 
     setLoading(true);
     setError("");
     axios
-      .delete(`${BASE_URL}/pacientes/delete/${id}`, {
+      .delete(`${BASE_URL}/mascotas/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
-        setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        fetchMascotas(); // Recargar la lista
       })
       .catch((error) => {
-        setError("Error al eliminar el paciente");
+        setError("Error al eliminar la mascota");
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const handleUpdate = (id, nombre_mascota, raza, nombre_dueño) => {
-    const newNombrem = prompt("Nuevo nombre de mascota:", nombre_mascota);
-    if (newNombrem === null) return;
+  const handleUpdateMascota = (id, mascotaActual) => {
+    const nombre = prompt("Nuevo nombre de mascota:", mascotaActual.nombre);
+    if (nombre === null) return;
 
-    const newRaza = prompt("Nueva raza:", raza);
-    if (newRaza === null) return;
+    const especie = prompt("Nueva especie:", mascotaActual.especie);
+    if (especie === null) return;
 
-    const newNombred = prompt("Nuevo nombre de dueño:", nombre_dueño);
-    if (newNombred === null) return;
+    const edad = prompt("Nueva edad:", mascotaActual.edad);
+    if (edad === null) return;
+
+    const sexo = prompt("Nuevo sexo (Macho/Hembra):", mascotaActual.sexo);
+    if (sexo === null) return;
 
     setLoading(true);
     setError("");
     axios
       .put(
-        `${BASE_URL}/pacientes/update/${id}`,
+        `${BASE_URL}/mascotas/update/${id}`,
         {
-          nombre_mascota: newNombrem,
-          raza: newRaza,
-          nombre_dueño: newNombred
+          nombre,
+          especie,
+          edad: parseInt(edad),
+          sexo
         },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       )
       .then(() => {
-        setItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === id
-              ? {
-                  ...item,
-                  nombre_mascota: newNombrem,
-                  raza: newRaza,
-                  nombre_dueño: newNombred
-                }
-              : item
-          )
-        );
+        fetchMascotas(); // Recargar la lista
       })
       .catch((error) => {
-        setError("Error al actualizar el paciente");
+        setError("Error al actualizar la mascota");
       })
       .finally(() => {
         setLoading(false);
@@ -244,7 +272,7 @@ const App = () => {
   const handleLogout = () => {
     setToken(null);
     setUsuario(null);
-    setItems([]);
+    setMascotas([]);
     setSeccionActual("pacientes");
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
@@ -305,46 +333,69 @@ const App = () => {
       });
   };
 
-  const calcularPacientesEsteMes = () => {
+  // Funciones para reportes
+  const calcularMascotasEsteMes = () => {
     const mesActual = new Date().getMonth();
     const añoActual = new Date().getFullYear();
     
-    return items.filter(item => {
-      const fecha = new Date(item.fecha_creacion || new Date());
+    return mascotas.filter(mascota => {
+      const fecha = new Date(mascota.fecha_creacion || new Date());
       return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
     }).length;
   };
 
-  const obtenerRazasUnicas = () => {
-    return [...new Set(items.map(item => item.raza))];
+  const obtenerEspeciesUnicas = () => {
+    const especies = [...new Set(mascotas.map(mascota => mascota.especie))];
+    return especies.filter(especie => especie); // Filtrar valores nulos o vacíos
   };
 
-  const obtenerRazaMasComun = () => {
-    if (items.length === 0) return "N/A";
+  const obtenerEspecieMasComun = () => {
+    if (mascotas.length === 0) return "N/A";
     
-    const razasConteo = {};
-    items.forEach(item => {
-      razasConteo[item.raza] = (razasConteo[item.raza] || 0) + 1;
+    const especiesConteo = {};
+    mascotas.forEach(mascota => {
+      const especie = mascota.especie?.toLowerCase();
+      if (especie) {
+        especiesConteo[especie] = (especiesConteo[especie] || 0) + 1;
+      }
     });
     
-    const razaMasComun = Object.keys(razasConteo).reduce((a, b) =>
-      razasConteo[a] > razasConteo[b] ? a : b
+    if (Object.keys(especiesConteo).length === 0) return "N/A";
+    
+    const especieMasComun = Object.keys(especiesConteo).reduce((a, b) =>
+      especiesConteo[a] > especiesConteo[b] ? a : b
     );
     
-    return razaMasComun;
+    return especieMasComun.charAt(0).toUpperCase() + especieMasComun.slice(1);
   };
 
-  const obtenerRazasConConteo = () => {
-    const razasConteo = {};
+  const obtenerEspeciesConConteo = () => {
+    const especiesConteo = {};
     
-    items.forEach(item => {
-      razasConteo[item.raza] = (razasConteo[item.raza] || 0) + 1;
+    mascotas.forEach(mascota => {
+      const especie = mascota.especie?.toLowerCase();
+      if (especie) {
+        especiesConteo[especie] = (especiesConteo[especie] || 0) + 1;
+      }
     });
     
-    return Object.entries(razasConteo)
-      .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+    return Object.entries(especiesConteo)
+      .map(([nombre, cantidad]) => ({ 
+        nombre: nombre.charAt(0).toUpperCase() + nombre.slice(1), 
+        cantidad 
+      }))
       .sort((a, b) => b.cantidad - a.cantidad)
       .slice(0, 10);
+  };
+
+  const obtenerDistribucionSexo = () => {
+    const distribucion = { Macho: 0, Hembra: 0 };
+    mascotas.forEach(mascota => {
+      if (mascota.sexo && distribucion.hasOwnProperty(mascota.sexo)) {
+        distribucion[mascota.sexo]++;
+      }
+    });
+    return distribucion;
   };
 
   if (!token) {
@@ -509,7 +560,10 @@ const App = () => {
           </button>
           <button
             className={`nav-item ${seccionActual === "reportes" ? "active" : ""}`}
-            onClick={() => setSeccionActual("reportes")}
+            onClick={() => {
+              setSeccionActual("reportes");
+              fetchEstadisticas();
+            }}
           >
             <FaChartBar /> Reportes
           </button>
@@ -542,49 +596,108 @@ const App = () => {
             <section className="section">
               <div className="section-header">
                 <h2>Gestión de Pacientes</h2>
-                <button className="btn-primary">+ Nuevo Paciente</button>
               </div>
 
               <div className="form-section">
-                <h3>Registrar nuevo paciente</h3>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    value={newNombrem}
-                    onChange={(e) => setNewNombrem(e.target.value)}
-                    placeholder="Nombre de la mascota"
-                    disabled={loading}
-                  />
-                  <input
-                    type="text"
-                    value={newRaza}
-                    onChange={(e) => setNewRaza(e.target.value)}
-                    placeholder="Raza"
-                    disabled={loading}
-                  />
-                  <input
-                    type="text"
-                    value={newNombred}
-                    onChange={(e) => setNewNombred(e.target.value)}
-                    placeholder="Nombre del dueño"
-                    disabled={loading}
-                  />
-                  <button
-                    onClick={handleCreate}
-                    disabled={loading}
-                    className="btn-create"
-                  >
-                    {loading ? "Cargando..." : "Crear"}
-                  </button>
+                <h3>Registrar nueva mascota</h3>
+                <div className="form-two-columns">
+                  <div className="form-column">
+                    <h4><FaPaw /> Información de la Mascota</h4>
+                    <div className="form-group">
+                      <label>Nombre de la Mascota</label>
+                      <input
+                        type="text"
+                        value={nuevaMascota.nombre}
+                        onChange={(e) => setNuevaMascota({...nuevaMascota, nombre: e.target.value})}
+                        placeholder="Ej: Max"
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Especie</label>
+                      <input
+                        type="text"
+                        value={nuevaMascota.especie}
+                        onChange={(e) => setNuevaMascota({...nuevaMascota, especie: e.target.value})}
+                        placeholder="Ej: Perro, Gato, etc."
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Edad (años)</label>
+                      <input
+                        type="number"
+                        value={nuevaMascota.edad}
+                        onChange={(e) => setNuevaMascota({...nuevaMascota, edad: e.target.value})}
+                        placeholder="Ej: 3"
+                        disabled={loading}
+                        min="0"
+                        max="30"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Sexo</label>
+                      <select
+                        value={nuevaMascota.sexo}
+                        onChange={(e) => setNuevaMascota({...nuevaMascota, sexo: e.target.value})}
+                        disabled={loading}
+                      >
+                        <option value="">Seleccionar...</option>
+                        <option value="Macho">Macho</option>
+                        <option value="Hembra">Hembra</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-column">
+                    <h4><FaUser /> Información del Dueño</h4>
+                    <div className="form-group">
+                      <label>Nombre Completo</label>
+                      <input
+                        type="text"
+                        value={nuevoDueño.nombre_completo}
+                        onChange={(e) => setNuevoDueño({...nuevoDueño, nombre_completo: e.target.value})}
+                        placeholder="Ej: Juan Pérez"
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Teléfono</label>
+                      <input
+                        type="tel"
+                        value={nuevoDueño.telefono}
+                        onChange={(e) => setNuevoDueño({...nuevoDueño, telefono: e.target.value})}
+                        placeholder="Ej: +1234567890"
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        value={nuevoDueño.email}
+                        onChange={(e) => setNuevoDueño({...nuevoDueño, email: e.target.value})}
+                        placeholder="Ej: juan@email.com"
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
                 </div>
+                <button
+                  onClick={handleCreateMascota}
+                  disabled={loading}
+                  className="btn-create"
+                >
+                  <FaPlus /> {loading ? "Registrando..." : "Registrar Mascota"}
+                </button>
               </div>
 
               <div className="table-section">
-                <h3>Pacientes registrados ({items.length})</h3>
-                {loading && items.length === 0 ? (
-                  <p className="loading">Cargando pacientes...</p>
-                ) : items.length === 0 ? (
-                  <p className="no-data">No hay pacientes registrados</p>
+                <h3>Mascotas registradas ({mascotas.length})</h3>
+                {loading && mascotas.length === 0 ? (
+                  <p className="loading">Cargando mascotas...</p>
+                ) : mascotas.length === 0 ? (
+                  <p className="no-data">No hay mascotas registradas</p>
                 ) : (
                   <div className="table-responsive">
                     <table className="patients-table">
@@ -592,37 +705,64 @@ const App = () => {
                         <tr>
                           <th>ID</th>
                           <th>Mascota</th>
-                          <th>Raza</th>
+                          <th>Especie</th>
+                          <th>Edad</th>
+                          <th>Sexo</th>
                           <th>Dueño</th>
+                          <th>Teléfono</th>
+                          <th>Email</th>
                           <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {items.map((item) => (
-                          <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.nombre_mascota}</td>
-                            <td>{item.raza}</td>
-                            <td>{item.nombre_dueño}</td>
+                        {mascotas.map((mascota) => (
+                          <tr key={mascota.id}>
+                            <td>{mascota.id}</td>
+                            <td>
+                              <div className="pet-info">
+                                <span className="pet-name">{mascota.nombre}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <span className={`especie-badge ${mascota.especie?.toLowerCase()}`}>
+                                {mascota.especie}
+                              </span>
+                            </td>
+                            <td>{mascota.edad} años</td>
+                            <td>
+                              <span className={`sexo-badge ${mascota.sexo?.toLowerCase()}`}>
+                                <FaVenusMars /> {mascota.sexo}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="owner-info">
+                                <FaUser /> {mascota.nombre_dueño}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="contact-info">
+                                <FaPhone /> {mascota.telefono}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="contact-info">
+                                <FaEnvelope /> {mascota.email_dueño}
+                              </div>
+                            </td>
                             <td className="actions">
                               <button
-                                onClick={() =>
-                                  handleUpdate(
-                                    item.id,
-                                    item.nombre_mascota,
-                                    item.raza,
-                                    item.nombre_dueño
-                                  )
-                                }
+                                onClick={() => handleUpdateMascota(mascota.id, mascota)}
                                 className="btn-edit"
                                 disabled={loading}
+                                title="Editar mascota"
                               >
                                 Editar
                               </button>
                               <button
-                                onClick={() => handleDelete(item.id)}
+                                onClick={() => handleDeleteMascota(mascota.id)}
                                 className="btn-delete"
                                 disabled={loading}
+                                title="Eliminar mascota"
                               >
                                 Eliminar
                               </button>
@@ -759,17 +899,17 @@ const App = () => {
           {seccionActual === "reportes" && (
             <section className="section">
               <div className="section-header">
-                <h2>Reportes de Pacientes</h2>
+                <h2>Reportes y Estadísticas</h2>
               </div>
 
               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-icon">
-                    <FaUsers />
+                    <FaPaw />
                   </div>
                   <div className="stat-content">
-                    <h4>Total de Pacientes</h4>
-                    <p className="stat-number">{items.length}</p>
+                    <h4>Total de Mascotas</h4>
+                    <p className="stat-number">{mascotas.length}</p>
                   </div>
                 </div>
 
@@ -778,8 +918,8 @@ const App = () => {
                     <FaPlus />
                   </div>
                   <div className="stat-content">
-                    <h4>Pacientes Este Mes</h4>
-                    <p className="stat-number">{calcularPacientesEsteMes()}</p>
+                    <h4>Mascotas Este Mes</h4>
+                    <p className="stat-number">{calcularMascotasEsteMes()}</p>
                   </div>
                 </div>
 
@@ -788,8 +928,8 @@ const App = () => {
                     <FaBars />
                   </div>
                   <div className="stat-content">
-                    <h4>Razas Diferentes</h4>
-                    <p className="stat-number">{obtenerRazasUnicas().length}</p>
+                    <h4>Especies Diferentes</h4>
+                    <p className="stat-number">{obtenerEspeciesUnicas().length}</p>
                   </div>
                 </div>
 
@@ -798,28 +938,96 @@ const App = () => {
                     <FaChartLine />
                   </div>
                   <div className="stat-content">
-                    <h4>Raza Más Común</h4>
-                    <p className="stat-number">{obtenerRazaMasComun()}</p>
+                    <h4>Especie Más Común</h4>
+                    <p className="stat-number">{obtenerEspecieMasComun()}</p>
                   </div>
                 </div>
               </div>
 
+              {/* Estadísticas avanzadas */}
+              {estadisticas && (
+                <div className="advanced-stats">
+                  <div className="stats-row">
+                    <div className="stat-chart">
+                      <h3>Distribución por Sexo</h3>
+                      <div className="chart-container">
+                        {estadisticas.distribucionSexo && estadisticas.distribucionSexo.length > 0 ? (
+                          <div className="pie-chart">
+                            {estadisticas.distribucionSexo.map((item, index) => (
+                              <div key={index} className="pie-item">
+                                <span className="pie-label">{item.sexo}</span>
+                                <span className="pie-value">{item.cantidad}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="bar-chart">
+                            {Object.entries(obtenerDistribucionSexo()).map(([sexo, cantidad]) => (
+                              <div key={sexo} className="bar-item">
+                                <div className="bar-label">{sexo}</div>
+                                <div className="bar-wrapper">
+                                  <div
+                                    className="bar"
+                                    style={{
+                                      width: `${(cantidad / Math.max(...Object.values(obtenerDistribucionSexo()))) * 100}%`
+                                    }}
+                                  >
+                                    <span className="bar-value">{cantidad}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="stat-chart">
+                      <h3>Distribución por Edad</h3>
+                      <div className="chart-container">
+                        {estadisticas.distribucionEdad && estadisticas.distribucionEdad.length > 0 ? (
+                          <div className="bar-chart">
+                            {estadisticas.distribucionEdad.map((grupo, index) => (
+                              <div key={index} className="bar-item">
+                                <div className="bar-label">{grupo.grupo_edad}</div>
+                                <div className="bar-wrapper">
+                                  <div
+                                    className="bar"
+                                    style={{
+                                      width: `${(grupo.cantidad / Math.max(...estadisticas.distribucionEdad.map(g => g.cantidad))) * 100}%`
+                                    }}
+                                  >
+                                    <span className="bar-value">{grupo.cantidad}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="no-data">No hay datos de edad</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="report-section">
-                <h3>Razas Más Comunes</h3>
+                <h3>Especies Más Comunes</h3>
                 <div className="chart-container">
-                  {items.length > 0 ? (
+                  {mascotas.length > 0 ? (
                     <div className="bar-chart">
-                      {obtenerRazasConConteo().map((raza, index) => (
+                      {obtenerEspeciesConConteo().map((especie, index) => (
                         <div key={index} className="bar-item">
-                          <div className="bar-label">{raza.nombre}</div>
+                          <div className="bar-label">{especie.nombre}</div>
                           <div className="bar-wrapper">
                             <div
                               className="bar"
                               style={{
-                                width: `${(raza.cantidad / Math.max(...obtenerRazasConConteo().map(r => r.cantidad))) * 100}%`
+                                width: `${(especie.cantidad / Math.max(...obtenerEspeciesConConteo().map(e => e.cantidad))) * 100}%`
                               }}
                             >
-                              <span className="bar-value">{raza.cantidad}</span>
+                              <span className="bar-value">{especie.cantidad}</span>
                             </div>
                           </div>
                         </div>
@@ -832,32 +1040,51 @@ const App = () => {
               </div>
 
               <div className="report-section">
-                <h3>Últimos Pacientes Registrados</h3>
-                {items.length > 0 ? (
+                <h3>Últimas Mascotas Registradas</h3>
+                {mascotas.length > 0 ? (
                   <div className="table-responsive">
                     <table className="report-table">
                       <thead>
                         <tr>
                           <th>ID</th>
                           <th>Mascota</th>
-                          <th>Raza</th>
+                          <th>Especie</th>
+                          <th>Edad</th>
+                          <th>Sexo</th>
                           <th>Dueño</th>
+                          <th>Fecha Registro</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {items.slice(-10).reverse().map((item) => (
-                          <tr key={item.id}>
-                            <td>#{item.id}</td>
-                            <td>{item.nombre_mascota}</td>
-                            <td>{item.raza}</td>
-                            <td>{item.nombre_dueño}</td>
+                        {mascotas.slice(-10).reverse().map((mascota) => (
+                          <tr key={mascota.id}>
+                            <td>#{mascota.id}</td>
+                            <td>{mascota.nombre}</td>
+                            <td>
+                              <span className={`especie-badge ${mascota.especie?.toLowerCase()}`}>
+                                {mascota.especie}
+                              </span>
+                            </td>
+                            <td>{mascota.edad} años</td>
+                            <td>
+                              <span className={`sexo-badge ${mascota.sexo?.toLowerCase()}`}>
+                                {mascota.sexo}
+                              </span>
+                            </td>
+                            <td>{mascota.nombre_dueño}</td>
+                            <td>
+                              {mascota.fecha_creacion ? 
+                                new Date(mascota.fecha_creacion).toLocaleDateString() : 
+                                'N/A'
+                              }
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 ) : (
-                  <p className="no-data">No hay pacientes registrados</p>
+                  <p className="no-data">No hay mascotas registradas</p>
                 )}
               </div>
             </section>

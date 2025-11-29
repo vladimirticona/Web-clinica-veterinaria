@@ -1,16 +1,15 @@
-//Este es index.js backend
 /**
  * @fileoverview API RESTful para la gestión de pacientes en clínica veterinaria
  * con autenticación JWT por email y documentación Swagger
  * 
  * @author dev.ticma
- * @version 2.0.0
+ * @version 3.0.0
  * @since 2024-11-25
  * 
  * @description
  * Servidor Express que proporciona:
  * - Autenticación y registro de usuarios por email
- * - Gestión CRUD de pacientes
+ * - Gestión CRUD de pacientes y dueños
  * - Protección de endpoints con JWT
  * - Documentación automática con Swagger
  * 
@@ -180,7 +179,8 @@ class GenericRepository {
 }
 
 // Instancias de repositorios
-const pacienteRepository = new GenericRepository('pacientes');
+const mascotaRepository = new GenericRepository('mascotas');
+const dueñoRepository = new GenericRepository('dueños');
 const usuarioRepository = new GenericRepository('usuarios');
 
 // ============================================
@@ -237,8 +237,8 @@ const swaggerOptions = {
         openapi: '3.0.0',
         info: {
             title: 'API Clínica Veterinaria',
-            version: '2.0.0',
-            description: 'API RESTful para gestión de pacientes con autenticación JWT por email'
+            version: '3.0.0',
+            description: 'API RESTful para gestión de mascotas y dueños con autenticación JWT por email'
         },
         servers: [
             {
@@ -264,13 +264,24 @@ const swaggerOptions = {
                         rol: { type: 'string' }
                     }
                 },
-                Paciente: {
+                Mascota: {
                     type: 'object',
                     properties: {
                         id: { type: 'integer' },
-                        nombre_mascota: { type: 'string' },
-                        raza: { type: 'string' },
-                        nombre_dueño: { type: 'string' }
+                        nombre: { type: 'string' },
+                        especie: { type: 'string' },
+                        edad: { type: 'integer' },
+                        sexo: { type: 'string', enum: ['Macho', 'Hembra'] },
+                        id_dueño: { type: 'integer' }
+                    }
+                },
+                Dueño: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer' },
+                        nombre_completo: { type: 'string' },
+                        telefono: { type: 'string' },
+                        email: { type: 'string' }
                     }
                 }
             }
@@ -479,21 +490,21 @@ app.post('/auth/login', async (req, res) => {
 });
 
 // ============================================
-// ENDPOINTS DE PACIENTES (PROTEGIDOS)
+// ENDPOINTS DE MASCOTAS (PROTEGIDOS)
 // ============================================
 
 /**
  * @swagger
- * /pacientes:
+ * /mascotas:
  *   get:
- *     summary: Obtener todos los pacientes
+ *     summary: Obtener todas las mascotas con información de dueños
  *     tags:
- *       - Pacientes
+ *       - Mascotas
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de pacientes
+ *         description: Lista de mascotas con dueños
  *       401:
  *         description: No autorizado
  *       500:
@@ -501,20 +512,34 @@ app.post('/auth/login', async (req, res) => {
  */
 
 /**
- * GET /pacientes
+ * GET /mascotas
  * @async
  * @param {Object} req - Solicitud HTTP (requiere token en Authorization)
  * @param {Object} res - Respuesta HTTP
- * @returns {Array} Lista de todos los pacientes
- * @description Obtiene la lista completa de pacientes (requiere autenticación)
+ * @returns {Array} Lista de todas las mascotas con información de dueños
+ * @description Obtiene la lista completa de mascotas con información de dueños (requiere autenticación)
  */
-app.get('/pacientes', verificarToken, async (req, res) => {
+app.get('/mascotas', verificarToken, async (req, res) => {
     try {
-        const pacientes = await pacienteRepository.getAll();
-        res.status(200).json(pacientes);
+        const query = `
+            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño
+            FROM mascotas m
+            LEFT JOIN dueños d ON m.id_dueño = d.id
+            ORDER BY m.fecha_creacion DESC
+        `;
+        
+        db.query(query, (err, results) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'Error al obtener las mascotas',
+                    mensaje: err.message
+                });
+            }
+            res.status(200).json(results);
+        });
     } catch(error) {
         res.status(500).json({
-            error: 'Error al obtener los pacientes',
+            error: 'Error al obtener las mascotas',
             mensaje: error.message
         });
     }
@@ -522,11 +547,11 @@ app.get('/pacientes', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /pacientes/{id}:
+ * /mascotas/{id}:
  *   get:
- *     summary: Obtener paciente por ID
+ *     summary: Obtener mascota por ID
  *     tags:
- *       - Pacientes
+ *       - Mascotas
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -537,36 +562,50 @@ app.get('/pacientes', verificarToken, async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Paciente encontrado
+ *         description: Mascota encontrada
  *       401:
  *         description: No autorizado
  *       404:
- *         description: Paciente no encontrado
+ *         description: Mascota no encontrada
  */
 
 /**
- * GET /pacientes/:id
+ * GET /mascotas/:id
  * @async
  * @param {Object} req - Solicitud HTTP con ID en params
  * @param {Object} res - Respuesta HTTP
- * @returns {Object} El paciente solicitado
- * @description Obtiene un paciente específico por su ID
+ * @returns {Object} La mascota solicitada con información del dueño
+ * @description Obtiene una mascota específica por su ID
  */
-app.get('/pacientes/:id', verificarToken, async (req, res) => {
+app.get('/mascotas/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const paciente = await pacienteRepository.getById(id);
+        const query = `
+            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño
+            FROM mascotas m
+            LEFT JOIN dueños d ON m.id_dueño = d.id
+            WHERE m.id = ?
+        `;
         
-        if (!paciente) {
-            return res.status(404).json({
-                error: 'Paciente no encontrado'
-            });
-        }
-        
-        res.status(200).json(paciente);
+        db.query(query, [id], (err, results) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'Error al obtener la mascota',
+                    mensaje: err.message
+                });
+            }
+            
+            if (results.length === 0) {
+                return res.status(404).json({
+                    error: 'Mascota no encontrada'
+                });
+            }
+            
+            res.status(200).json(results[0]);
+        });
     } catch(error) {
         res.status(500).json({
-            error: 'Error al obtener el paciente',
+            error: 'Error al obtener la mascota',
             mensaje: error.message
         });
     }
@@ -574,11 +613,11 @@ app.get('/pacientes/:id', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /pacientes/add:
+ * /mascotas/add:
  *   post:
- *     summary: Crear nuevo paciente
+ *     summary: Crear nueva mascota y dueño
  *     tags:
- *       - Pacientes
+ *       - Mascotas
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -587,17 +626,26 @@ app.get('/pacientes/:id', verificarToken, async (req, res) => {
  *         application/json:
  *           schema:
  *             type: object
- *             required: ['nombre_mascota', 'raza', 'nombre_dueño']
+ *             required: ['nombre', 'especie', 'edad', 'sexo', 'nombre_dueño', 'telefono', 'email']
  *             properties:
- *               nombre_mascota:
+ *               nombre:
  *                 type: string
- *               raza:
+ *               especie:
  *                 type: string
+ *               edad:
+ *                 type: integer
+ *               sexo:
+ *                 type: string
+ *                 enum: ['Macho', 'Hembra']
  *               nombre_dueño:
+ *                 type: string
+ *               telefono:
+ *                 type: string
+ *               email:
  *                 type: string
  *     responses:
  *       201:
- *         description: Paciente creado exitosamente
+ *         description: Mascota y dueño creados exitosamente
  *       400:
  *         description: Datos incompletos
  *       401:
@@ -605,36 +653,55 @@ app.get('/pacientes/:id', verificarToken, async (req, res) => {
  */
 
 /**
- * POST /pacientes/add
+ * POST /mascotas/add
  * @async
- * @param {Object} req - Solicitud HTTP con datos del paciente
- * @param {string} req.body.nombre_mascota - Nombre de la mascota
- * @param {string} req.body.raza - Raza de la mascota
- * @param {string} req.body.nombre_dueño - Nombre del propietario
+ * @param {Object} req - Solicitud HTTP con datos de mascota y dueño
+ * @param {string} req.body.nombre - Nombre de la mascota
+ * @param {string} req.body.especie - Especie de la mascota (convertida a minúsculas)
+ * @param {number} req.body.edad - Edad de la mascota
+ * @param {string} req.body.sexo - Sexo de la mascota (Macho/Hembra)
+ * @param {string} req.body.nombre_dueño - Nombre del dueño
+ * @param {string} req.body.telefono - Teléfono del dueño
+ * @param {string} req.body.email - Email del dueño
  * @param {Object} res - Respuesta HTTP
- * @returns {Object} Paciente creado con su ID
- * @description Crea un nuevo paciente en el sistema
+ * @returns {Object} Mascota y dueño creados
+ * @description Crea un nuevo dueño y mascota en el sistema
  */
-app.post('/pacientes/add', verificarToken, async (req, res) => {
+app.post('/mascotas/add', verificarToken, async (req, res) => {
     try {
-        const { nombre_mascota, raza, nombre_dueño } = req.body;
+        const { nombre, especie, edad, sexo, nombre_dueño, telefono, email } = req.body;
         
-        if (!nombre_mascota || !raza || !nombre_dueño) {
+        if (!nombre || !especie || !edad || !sexo || !nombre_dueño || !telefono || !email) {
             return res.status(400).json({
-                error: 'Datos incompletos'
+                error: 'Datos incompletos',
+                mensaje: 'Se requieren todos los campos: nombre, especie, edad, sexo, nombre_dueño, telefono, email'
             });
         }
 
-        const resultado = await pacienteRepository.create({
-            nombre_mascota,
-            raza,
-            nombre_dueño
+        // Crear dueño primero
+        const nuevoDueño = await dueñoRepository.create({
+            nombre_completo: nombre_dueño,
+            telefono,
+            email
         });
-        
-        res.status(201).json(resultado);
+
+        // Crear mascota con el ID del dueño
+        const nuevaMascota = await mascotaRepository.create({
+            nombre,
+            especie: especie.toLowerCase(), // Convertir a minúsculas para consistencia
+            edad,
+            sexo,
+            id_dueño: nuevoDueño.id
+        });
+
+        res.status(201).json({
+            mensaje: 'Mascota y dueño registrados exitosamente',
+            mascota: nuevaMascota,
+            dueño: nuevoDueño
+        });
     } catch(error) {
         res.status(500).json({
-            error: 'Error al crear el paciente',
+            error: 'Error al crear la mascota',
             mensaje: error.message
         });
     }
@@ -642,11 +709,11 @@ app.post('/pacientes/add', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /pacientes/update/{id}:
+ * /mascotas/update/{id}:
  *   put:
- *     summary: Actualizar paciente
+ *     summary: Actualizar mascota
  *     tags:
- *       - Pacientes
+ *       - Mascotas
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -662,49 +729,53 @@ app.post('/pacientes/add', verificarToken, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               nombre_mascota:
+ *               nombre:
  *                 type: string
- *               raza:
+ *               especie:
  *                 type: string
- *               nombre_dueño:
+ *               edad:
+ *                 type: integer
+ *               sexo:
  *                 type: string
  *     responses:
  *       200:
- *         description: Paciente actualizado
+ *         description: Mascota actualizada
  *       401:
  *         description: No autorizado
  *       404:
- *         description: Paciente no encontrado
+ *         description: Mascota no encontrada
  */
 
 /**
- * PUT /pacientes/update/:id
+ * PUT /mascotas/update/:id
  * @async
  * @param {Object} req - Solicitud HTTP con datos actualizados
  * @param {Object} res - Respuesta HTTP
- * @returns {Object} Paciente actualizado
- * @description Actualiza los datos de un paciente existente
+ * @returns {Object} Mascota actualizada
+ * @description Actualiza los datos de una mascota existente
  */
-app.put('/pacientes/update/:id', verificarToken, async (req, res) => {
+app.put('/mascotas/update/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre_mascota, raza, nombre_dueño } = req.body;
+        const { nombre, especie, edad, sexo } = req.body;
 
-        const resultado = await pacienteRepository.update(id, {
-            nombre_mascota,
-            raza,
-            nombre_dueño
-        });
+        const datosActualizar = {};
+        if (nombre) datosActualizar.nombre = nombre;
+        if (especie) datosActualizar.especie = especie.toLowerCase();
+        if (edad) datosActualizar.edad = edad;
+        if (sexo) datosActualizar.sexo = sexo;
+
+        const resultado = await mascotaRepository.update(id, datosActualizar);
         
         res.status(200).json(resultado);
     } catch(error) {
         if (error.message === 'Registro no encontrado') {
             return res.status(404).json({
-                error: 'Paciente no encontrado'
+                error: 'Mascota no encontrada'
             });
         }
         res.status(500).json({
-            error: 'Error al actualizar el paciente',
+            error: 'Error al actualizar la mascota',
             mensaje: error.message
         });
     }
@@ -712,11 +783,11 @@ app.put('/pacientes/update/:id', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /pacientes/delete/{id}:
+ * /mascotas/delete/{id}:
  *   delete:
- *     summary: Eliminar paciente
+ *     summary: Eliminar mascota
  *     tags:
- *       - Pacientes
+ *       - Mascotas
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -727,34 +798,161 @@ app.put('/pacientes/update/:id', verificarToken, async (req, res) => {
  *           type: integer
  *     responses:
  *       204:
- *         description: Paciente eliminado
+ *         description: Mascota eliminada
  *       401:
  *         description: No autorizado
  *       404:
- *         description: Paciente no encontrado
+ *         description: Mascota no encontrada
  */
 
 /**
- * DELETE /pacientes/delete/:id
+ * DELETE /mascotas/delete/:id
  * @async
  * @param {Object} req - Solicitud HTTP con ID en params
  * @param {Object} res - Respuesta HTTP
  * @returns {void}
- * @description Elimina un paciente del sistema
+ * @description Elimina una mascota del sistema
  */
-app.delete('/pacientes/delete/:id', verificarToken, async (req, res) => {
+app.delete('/mascotas/delete/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
-        await pacienteRepository.delete(id);
-        res.status(204).send();
+        
+        // Primero obtener el id_dueño para eliminar también el dueño si no tiene más mascotas
+        const mascota = await mascotaRepository.getById(id);
+        if (!mascota) {
+            return res.status(404).json({
+                error: 'Mascota no encontrada'
+            });
+        }
+
+        const id_dueño = mascota.id_dueño;
+
+        // Eliminar la mascota
+        await mascotaRepository.delete(id);
+
+        // Verificar si el dueño tiene más mascotas
+        const query = 'SELECT COUNT(*) as count FROM mascotas WHERE id_dueño = ?';
+        db.query(query, [id_dueño], (err, results) => {
+            if (err) {
+                console.error('Error al verificar mascotas del dueño:', err);
+                return res.status(204).send(); // Aún así retornamos éxito
+            }
+
+            // Si no tiene más mascotas, eliminar el dueño
+            if (results[0].count === 0) {
+                dueñoRepository.delete(id_dueño)
+                    .catch(err => console.error('Error al eliminar dueño:', err));
+            }
+
+            res.status(204).send();
+        });
     } catch(error) {
         if (error.message === 'Registro no encontrado') {
             return res.status(404).json({
-                error: 'Paciente no encontrado'
+                error: 'Mascota no encontrada'
             });
         }
         res.status(500).json({
-            error: 'Error al eliminar el paciente',
+            error: 'Error al eliminar la mascota',
+            mensaje: error.message
+        });
+    }
+});
+
+// ============================================
+// ENDPOINTS DE REPORTES
+// ============================================
+
+/**
+ * @swagger
+ * /reportes/estadisticas:
+ *   get:
+ *     summary: Obtener estadísticas completas
+ *     tags:
+ *       - Reportes
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Estadísticas obtenidas exitosamente
+ *       401:
+ *         description: No autorizado
+ */
+
+/**
+ * GET /reportes/estadisticas
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Object} Estadísticas completas del sistema
+ * @description Obtiene estadísticas detalladas para reportes
+ */
+app.get('/reportes/estadisticas', verificarToken, async (req, res) => {
+    try {
+        const queries = {
+            totalMascotas: 'SELECT COUNT(*) as total FROM mascotas',
+            totalDueños: 'SELECT COUNT(*) as total FROM dueños',
+            mascotasEsteMes: `
+                SELECT COUNT(*) as total FROM mascotas 
+                WHERE MONTH(fecha_creacion) = MONTH(CURRENT_DATE()) 
+                AND YEAR(fecha_creacion) = YEAR(CURRENT_DATE())
+            `,
+            especiesComunes: `
+                SELECT especie, COUNT(*) as cantidad 
+                FROM mascotas 
+                GROUP BY LOWER(especie) 
+                ORDER BY cantidad DESC 
+                LIMIT 10
+            `,
+            distribucionSexo: `
+                SELECT sexo, COUNT(*) as cantidad 
+                FROM mascotas 
+                WHERE sexo IS NOT NULL 
+                GROUP BY sexo
+            `,
+            distribucionEdad: `
+                SELECT 
+                    CASE 
+                        WHEN edad <= 1 THEN 'Cachorro (0-1 año)'
+                        WHEN edad <= 3 THEN 'Joven (1-3 años)'
+                        WHEN edad <= 7 THEN 'Adulto (3-7 años)'
+                        ELSE 'Senior (7+ años)'
+                    END as grupo_edad,
+                    COUNT(*) as cantidad
+                FROM mascotas 
+                WHERE edad IS NOT NULL
+                GROUP BY grupo_edad
+                ORDER BY MIN(edad)
+            `,
+            mascotasPorMes: `
+                SELECT 
+                    DATE_FORMAT(fecha_creacion, '%Y-%m') as mes,
+                    COUNT(*) as cantidad
+                FROM mascotas 
+                WHERE fecha_creacion >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                GROUP BY mes
+                ORDER BY mes
+            `
+        };
+
+        const resultados = {};
+
+        for (const [key, query] of Object.entries(queries)) {
+            await new Promise((resolve, reject) => {
+                db.query(query, (err, results) => {
+                    if (err) reject(err);
+                    else {
+                        resultados[key] = results;
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        res.status(200).json(resultados);
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al obtener estadísticas',
             mensaje: error.message
         });
     }
