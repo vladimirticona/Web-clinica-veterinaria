@@ -1,43 +1,30 @@
 /**
- * @fileoverview Componente principal con Dashboard y React Icons
- * @description Incluye login, dashboard con sidebar y gestión de pacientes
- * @version 2.0.0
+ * Este es App.jsx
+ * @fileoverview Componente principal con Dashboard, Reportes y React Icons
+ * @description Incluye login, dashboard con sidebar y gestión completa
+ * @version 2.1.0
  * @author dev.ticma
  */
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FaUsers, FaCalendar, FaShoppingBag, FaChartBar, FaCog, FaDoorOpen, FaUserMd, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import { FaUsers, FaCalendar, FaShoppingBag, FaChartBar, FaCog, FaDoorOpen, FaUserMd, FaSignInAlt, FaUserPlus, FaPlus, FaBars, FaChartLine } from 'react-icons/fa';
 import "./Dashboard.css";
 
 const BASE_URL = "http://127.0.0.1:3000";
 
-/**
- * Componente principal de la aplicación
- * @component
- * @returns {React.ReactElement} Aplicación con login y dashboard
- */
 const App = () => {
-  // ============================================
-  // ESTADOS - AUTENTICACIÓN
-  // ============================================
   const [usuario, setUsuario] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
 
-  // ============================================
-  // ESTADOS - REGISTRO
-  // ============================================
   const [regNombre, setRegNombre] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regPasswordConfirm, setRegPasswordConfirm] = useState("");
 
-  // ============================================
-  // ESTADOS - DASHBOARD
-  // ============================================
   const [seccionActual, setSeccionActual] = useState("pacientes");
   const [items, setItems] = useState([]);
   const [newNombrem, setNewNombrem] = useState("");
@@ -46,9 +33,13 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ============================================
-  // EFECTOS
-  // ============================================
+  const [editNombre, setEditNombre] = useState(usuario?.nombre_completo || "");
+  const [editEmail, setEditEmail] = useState(usuario?.email || "");
+  const [editPassword, setEditPassword] = useState("");
+  const [editPasswordNew, setEditPasswordNew] = useState("");
+  const [editPasswordConfirm, setEditPasswordConfirm] = useState("");
+  const [modoEdicion, setModoEdicion] = useState(false);
+
   useEffect(() => {
     if (token) {
       const storedUser = localStorage.getItem("usuario");
@@ -59,14 +50,6 @@ const App = () => {
     }
   }, [token]);
 
-  // ============================================
-  // FUNCIONES - PACIENTES
-  // ============================================
-
-  /**
-   * Obtiene la lista de pacientes
-   * @async
-   */
   const fetchPacientes = () => {
     setLoading(true);
     setError("");
@@ -85,10 +68,6 @@ const App = () => {
       });
   };
 
-  /**
-   * Crea un nuevo paciente
-   * @async
-   */
   const handleCreate = () => {
     if (!newNombrem.trim() || !newRaza.trim() || !newNombred.trim()) {
       setError("Todos los campos son requeridos");
@@ -123,11 +102,6 @@ const App = () => {
       });
   };
 
-  /**
-   * Elimina un paciente
-   * @async
-   * @param {number} id - ID del paciente
-   */
   const handleDelete = (id) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este paciente?")) {
       return;
@@ -150,14 +124,6 @@ const App = () => {
       });
   };
 
-  /**
-   * Actualiza un paciente
-   * @async
-   * @param {number} id - ID del paciente
-   * @param {string} nombre_mascota - Nombre de la mascota
-   * @param {string} raza - Raza
-   * @param {string} nombre_dueño - Nombre del dueño
-   */
   const handleUpdate = (id, nombre_mascota, raza, nombre_dueño) => {
     const newNombrem = prompt("Nuevo nombre de mascota:", nombre_mascota);
     if (newNombrem === null) return;
@@ -204,14 +170,6 @@ const App = () => {
       });
   };
 
-  // ============================================
-  // FUNCIONES - AUTENTICACIÓN
-  // ============================================
-
-  /**
-   * Realiza el login
-   * @async
-   */
   const handleLogin = () => {
     if (!loginEmail.trim() || !loginPassword.trim()) {
       setError("Todos los campos son requeridos");
@@ -242,10 +200,6 @@ const App = () => {
       });
   };
 
-  /**
-   * Registra un nuevo usuario
-   * @async
-   */
   const handleRegistro = () => {
     if (
       !regNombre.trim() ||
@@ -287,9 +241,6 @@ const App = () => {
       });
   };
 
-  /**
-   * Cierra la sesión
-   */
   const handleLogout = () => {
     setToken(null);
     setUsuario(null);
@@ -299,9 +250,102 @@ const App = () => {
     localStorage.removeItem("usuario");
   };
 
-  // ============================================
-  // RENDERIZADO - LOGIN
-  // ============================================
+  const handleActualizarPerfil = () => {
+    if (!editNombre.trim() || !editEmail.trim()) {
+      setError("Nombre y email son requeridos");
+      return;
+    }
+
+    if (editPasswordNew || editPasswordConfirm) {
+      if (!editPassword.trim()) {
+        setError("Debes ingresar tu contraseña actual para cambiarla");
+        return;
+      }
+      if (editPasswordNew !== editPasswordConfirm) {
+        setError("Las nuevas contraseñas no coinciden");
+        return;
+      }
+      if (editPasswordNew.length < 6) {
+        setError("La nueva contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+    }
+
+    setLoading(true);
+    setError("");
+
+    const datos = {
+      nombre_completo: editNombre,
+      email: editEmail
+    };
+
+    if (editPasswordNew) {
+      datos.contraseña_actual = editPassword;
+      datos.contraseña_nueva = editPasswordNew;
+    }
+
+    axios
+      .put(`${BASE_URL}/perfil/actualizar`, datos, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((response) => {
+        const usuarioActualizado = response.data.usuario;
+        setUsuario(usuarioActualizado);
+        localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        setModoEdicion(false);
+        setEditPassword("");
+        setEditPasswordNew("");
+        setEditPasswordConfirm("");
+        setLoading(false);
+        alert("Perfil actualizado exitosamente");
+      })
+      .catch((error) => {
+        setError(error.response?.data?.error || "Error al actualizar el perfil");
+        setLoading(false);
+      });
+  };
+
+  const calcularPacientesEsteMes = () => {
+    const mesActual = new Date().getMonth();
+    const añoActual = new Date().getFullYear();
+    
+    return items.filter(item => {
+      const fecha = new Date(item.fecha_creacion || new Date());
+      return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+    }).length;
+  };
+
+  const obtenerRazasUnicas = () => {
+    return [...new Set(items.map(item => item.raza))];
+  };
+
+  const obtenerRazaMasComun = () => {
+    if (items.length === 0) return "N/A";
+    
+    const razasConteo = {};
+    items.forEach(item => {
+      razasConteo[item.raza] = (razasConteo[item.raza] || 0) + 1;
+    });
+    
+    const razaMasComun = Object.keys(razasConteo).reduce((a, b) =>
+      razasConteo[a] > razasConteo[b] ? a : b
+    );
+    
+    return razaMasComun;
+  };
+
+  const obtenerRazasConConteo = () => {
+    const razasConteo = {};
+    
+    items.forEach(item => {
+      razasConteo[item.raza] = (razasConteo[item.raza] || 0) + 1;
+    });
+    
+    return Object.entries(razasConteo)
+      .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .slice(0, 10);
+  };
 
   if (!token) {
     return (
@@ -431,13 +475,8 @@ const App = () => {
     );
   }
 
-  // ============================================
-  // RENDERIZADO - DASHBOARD
-  // ============================================
-
   return (
     <div className="dashboard-container">
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
@@ -487,9 +526,7 @@ const App = () => {
         </button>
       </aside>
 
-      {/* MAIN CONTENT */}
       <main className="main-content">
-        {/* HEADER */}
         <header className="top-header">
           <h1>Bienvenido otra vez, {usuario?.nombre_completo}</h1>
           <div className="header-user">
@@ -498,11 +535,9 @@ const App = () => {
           </div>
         </header>
 
-        {/* CONTENIDO */}
         <div className="content">
           {error && <div className="error-message">{error}</div>}
 
-          {/* SECCIÓN PACIENTES */}
           {seccionActual === "pacientes" && (
             <section className="section">
               <div className="section-header">
@@ -539,7 +574,7 @@ const App = () => {
                     disabled={loading}
                     className="btn-create"
                   >
-                    {loading ? "Cargando..." : "➕ Crear"}
+                    {loading ? "Cargando..." : "Crear"}
                   </button>
                 </div>
               </div>
@@ -602,7 +637,6 @@ const App = () => {
             </section>
           )}
 
-          {/* SECCIÓN CONFIGURACIÓN */}
           {seccionActual === "configuracion" && (
             <section className="section">
               <div className="section-header">
@@ -610,28 +644,227 @@ const App = () => {
               </div>
               <div className="config-card">
                 <h3>Perfil del Usuario</h3>
-                <div className="profile-info">
-                  <div className="info-group">
-                    <label>Nombre Completo</label>
-                    <p>{usuario?.nombre_completo}</p>
+                
+                {!modoEdicion ? (
+                  <>
+                    <div className="profile-info">
+                      <div className="info-group">
+                        <label>Nombre Completo</label>
+                        <p>{usuario?.nombre_completo}</p>
+                      </div>
+                      <div className="info-group">
+                        <label>Email</label>
+                        <p>{usuario?.email}</p>
+                      </div>
+                      <div className="info-group">
+                        <label>Rol</label>
+                        <p>{usuario?.rol}</p>
+                      </div>
+                    </div>
+                    <button 
+                      className="btn-edit-profile"
+                      onClick={() => {
+                        setEditNombre(usuario?.nombre_completo);
+                        setEditEmail(usuario?.email);
+                        setModoEdicion(true);
+                      }}
+                    >
+                      Editar Perfil
+                    </button>
+                  </>
+                ) : (
+                  <div className="edit-form">
+                    <div className="form-group">
+                      <label>Nombre Completo</label>
+                      <input
+                        type="text"
+                        value={editNombre}
+                        onChange={(e) => setEditNombre(e.target.value)}
+                        placeholder="Tu nombre completo"
+                        disabled={loading}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        value={editEmail}
+                        onChange={(e) => setEditEmail(e.target.value)}
+                        placeholder="tu@email.com"
+                        disabled={loading}
+                      />
+                    </div>
+                    
+                    <div className="password-section">
+                      <h4>Cambiar Contraseña (Opcional)</h4>
+                      <div className="form-group">
+                        <label>Contraseña Actual</label>
+                        <input
+                          type="password"
+                          value={editPassword}
+                          onChange={(e) => setEditPassword(e.target.value)}
+                          placeholder="••••••••"
+                          disabled={loading}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input
+                          type="password"
+                          value={editPasswordNew}
+                          onChange={(e) => setEditPasswordNew(e.target.value)}
+                          placeholder="••••••••"
+                          disabled={loading}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Confirmar Nueva Contraseña</label>
+                        <input
+                          type="password"
+                          value={editPasswordConfirm}
+                          onChange={(e) => setEditPasswordConfirm(e.target.value)}
+                          placeholder="••••••••"
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="button-group">
+                      <button 
+                        className="btn-save"
+                        onClick={handleActualizarPerfil}
+                        disabled={loading}
+                      >
+                        {loading ? "Guardando..." : "Guardar Cambios"}
+                      </button>
+                      <button 
+                        className="btn-cancel"
+                        onClick={() => {
+                          setModoEdicion(false);
+                          setEditPassword("");
+                          setEditPasswordNew("");
+                          setEditPasswordConfirm("");
+                        }}
+                        disabled={loading}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
-                  <div className="info-group">
-                    <label>Email</label>
-                    <p>{usuario?.email}</p>
-                  </div>
-                  <div className="info-group">
-                    <label>Rol</label>
-                    <p>{usuario?.rol}</p>
-                  </div>
-                </div>
+                )}
               </div>
             </section>
           )}
 
-          {/* SECCIONES EN DESARROLLO */}
+          {seccionActual === "reportes" && (
+            <section className="section">
+              <div className="section-header">
+                <h2>Reportes de Pacientes</h2>
+              </div>
+
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <FaUsers />
+                  </div>
+                  <div className="stat-content">
+                    <h4>Total de Pacientes</h4>
+                    <p className="stat-number">{items.length}</p>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <FaPlus />
+                  </div>
+                  <div className="stat-content">
+                    <h4>Pacientes Este Mes</h4>
+                    <p className="stat-number">{calcularPacientesEsteMes()}</p>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <FaBars />
+                  </div>
+                  <div className="stat-content">
+                    <h4>Razas Diferentes</h4>
+                    <p className="stat-number">{obtenerRazasUnicas().length}</p>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <FaChartLine />
+                  </div>
+                  <div className="stat-content">
+                    <h4>Raza Más Común</h4>
+                    <p className="stat-number">{obtenerRazaMasComun()}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="report-section">
+                <h3>Razas Más Comunes</h3>
+                <div className="chart-container">
+                  {items.length > 0 ? (
+                    <div className="bar-chart">
+                      {obtenerRazasConConteo().map((raza, index) => (
+                        <div key={index} className="bar-item">
+                          <div className="bar-label">{raza.nombre}</div>
+                          <div className="bar-wrapper">
+                            <div
+                              className="bar"
+                              style={{
+                                width: `${(raza.cantidad / Math.max(...obtenerRazasConConteo().map(r => r.cantidad))) * 100}%`
+                              }}
+                            >
+                              <span className="bar-value">{raza.cantidad}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="no-data">No hay datos para mostrar</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="report-section">
+                <h3>Últimos Pacientes Registrados</h3>
+                {items.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="report-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Mascota</th>
+                          <th>Raza</th>
+                          <th>Dueño</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {items.slice(-10).reverse().map((item) => (
+                          <tr key={item.id}>
+                            <td>#{item.id}</td>
+                            <td>{item.nombre_mascota}</td>
+                            <td>{item.raza}</td>
+                            <td>{item.nombre_dueño}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="no-data">No hay pacientes registrados</p>
+                )}
+              </div>
+            </section>
+          )}
+
           {(seccionActual === "reservaciones" ||
-            seccionActual === "petshop" ||
-            seccionActual === "reportes") && (
+            seccionActual === "petshop") && (
             <section className="section">
               <div className="development-message">
                 <h2>Sección en Desarrollo</h2>
@@ -640,7 +873,6 @@ const App = () => {
                   <strong>
                     {seccionActual === "reservaciones" && "Reservaciones"}
                     {seccionActual === "petshop" && "Petshop"}
-                    {seccionActual === "reportes" && "Reportes"}
                   </strong>{" "}
                   está siendo desarrollada.
                 </p>
