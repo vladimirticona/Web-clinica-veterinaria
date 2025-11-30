@@ -38,7 +38,7 @@ app.use(express.json());
 const JWT_SECRET = 'tu_clave_secreta_super_segura_2024';
 
 // ============================================
-// CONEXIÓN A BASE DE DATOS
+// CONEXIÓN A LA BASE DE DATOS
 // ============================================
 
 /**
