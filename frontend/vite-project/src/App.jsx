@@ -99,7 +99,7 @@ const App = () => {
   const handleCreateMascota = () => {
     const { nombre, especie, edad, sexo } = nuevaMascota;
     const { nombre_completo, telefono, email } = nuevoDueño;
-
+    // PROGRAMACIÓN DEFENSIVA: Validar todos los campos requeridos
     if (!nombre || !especie || !edad || !sexo || !nombre_completo || !telefono || !email) {
       setError("Todos los campos son requeridos");
       return;
@@ -109,7 +109,7 @@ const App = () => {
     setError("");
     axios
       .post(
-        `${BASE_URL}/mascotas/add`,
+        `${BASE_URL}/mascotas`,
         {
           nombre,
           especie,
@@ -138,14 +138,14 @@ const App = () => {
   };
 
   const handleDeleteMascota = (id) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar esta mascota?")) {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta mascota?")) { // PROGRAMACIÓN DEFENSIVA: Confirmación antes de acción destructiva
       return;
     }
 
     setLoading(true);
     setError("");
     axios
-      .delete(`${BASE_URL}/mascotas/delete/${id}`, {
+      .delete(`${BASE_URL}/mascotas/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => {
@@ -176,7 +176,7 @@ const App = () => {
     setError("");
     axios
       .put(
-        `${BASE_URL}/mascotas/update/${id}`,
+        `${BASE_URL}/mascotas/${id}`,
         {
           nombre,
           especie,

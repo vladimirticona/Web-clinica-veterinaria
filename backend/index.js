@@ -2,10 +2,6 @@
  * @fileoverview API RESTful para la gestión de pacientes en clínica veterinaria
  * con autenticación JWT por email y documentación Swagger
  * 
- * @author dev.ticma
- * @version 3.0.0
- * @since 2024-11-25
- * 
  * @description
  * Servidor Express que proporciona:
  * - Autenticación y registro de usuarios por email
@@ -74,10 +70,10 @@ db.connect(err => {
 
 /**
  * @class GenericRepository
- * @description Clase genérica que proporciona operaciones CRUD reutilizables
+ * @descripcion Clase genérica que proporciona operaciones CRUD reutilizables
  * para cualquier tabla de la base de datos
  * 
- * @example
+ * @ejemplo
  * const usuarioRepository = new GenericRepository('usuarios');
  * const usuarios = await usuarioRepository.getAll();
  */
@@ -153,6 +149,7 @@ class GenericRepository {
             const query = `UPDATE ${this.tableName} SET ? WHERE id = ?`;
             db.query(query, [data, id], (err, results) => {
                 if(err) reject(err);
+                // PROGRAMACIÓN DEFENSIVA: Validar que el registro existe antes de retornar
                 else if(results.affectedRows === 0) reject(new Error('Registro no encontrado'));
                 else resolve({ id, ...data });
             });
@@ -171,6 +168,7 @@ class GenericRepository {
             const query = `DELETE FROM ${this.tableName} WHERE id = ?`;
             db.query(query, [id], (err, results) => {
                 if(err) reject(err);
+                // PROGRAMACIÓN DEFENSIVA: Verificar que se eliminó algún registro
                 else if(results.affectedRows === 0) reject(new Error('Registro no encontrado'));
                 else resolve({ success: true });
             });
@@ -195,9 +193,9 @@ const usuarioRepository = new GenericRepository('usuarios');
  * @param {Object} res - Objeto de respuesta HTTP
  * @param {Function} next - Función para continuar al siguiente middleware
  * @returns {void}
- * @description Verifica que el token sea válido y no haya expirado
+ * @descripcion Verifica que el token sea válido y no haya expirado
  * 
- * @example
+ * @ejemplo
  * app.get('/ruta-protegida', verificarToken, (req, res) => {
  *   // req.usuario contiene los datos del usuario
  * });
@@ -345,6 +343,15 @@ app.post('/auth/registro', async (req, res) => {
     try {
         const { nombre_completo, email, contraseña } = req.body;
 
+        // ASERCIONES PARA VALIDAR DATOS DE ENTRADA
+        console.assert(nombre_completo && nombre_completo.trim().length > 0,
+            'Nombre completo es requerido y no puede estar vacío');
+        console.assert(email && email.includes('@') && email.includes('.'),
+            'Email debe tener formato válido', email);
+        console.assert(contraseña && contraseña.length >= 6,
+            'Contraseña debe tener al menos 6 caracteres');
+        
+        // PROGRAMACIÓN DEFENSIVA: Validar datos requeridos
         if (!nombre_completo || !email || !contraseña) {
             return res.status(400).json({
                 error: 'Datos incompletos',
@@ -613,7 +620,7 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /mascotas/add:
+ * /mascotas:
  *   post:
  *     summary: Crear nueva mascota y dueño
  *     tags:
@@ -653,7 +660,7 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
  */
 
 /**
- * POST /mascotas/add
+ * POST /mascotas
  * @async
  * @param {Object} req - Solicitud HTTP con datos de mascota y dueño
  * @param {string} req.body.nombre - Nombre de la mascota
@@ -667,7 +674,7 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
  * @returns {Object} Mascota y dueño creados
  * @description Crea un nuevo dueño y mascota en el sistema
  */
-app.post('/mascotas/add', verificarToken, async (req, res) => {
+app.post('/mascotas', verificarToken, async (req, res) => {
     try {
         const { nombre, especie, edad, sexo, nombre_dueño, telefono, email } = req.body;
         
@@ -709,7 +716,7 @@ app.post('/mascotas/add', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /mascotas/update/{id}:
+ * /mascotas/{id}:
  *   put:
  *     summary: Actualizar mascota
  *     tags:
@@ -747,14 +754,14 @@ app.post('/mascotas/add', verificarToken, async (req, res) => {
  */
 
 /**
- * PUT /mascotas/update/:id
+ * PUT /mascotas/:id
  * @async
  * @param {Object} req - Solicitud HTTP con datos actualizados
  * @param {Object} res - Respuesta HTTP
  * @returns {Object} Mascota actualizada
  * @description Actualiza los datos de una mascota existente
  */
-app.put('/mascotas/update/:id', verificarToken, async (req, res) => {
+app.put('/mascotas/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, especie, edad, sexo } = req.body;
@@ -783,7 +790,7 @@ app.put('/mascotas/update/:id', verificarToken, async (req, res) => {
 
 /**
  * @swagger
- * /mascotas/delete/{id}:
+ * /mascotas/{id}:
  *   delete:
  *     summary: Eliminar mascota
  *     tags:
@@ -806,14 +813,14 @@ app.put('/mascotas/update/:id', verificarToken, async (req, res) => {
  */
 
 /**
- * DELETE /mascotas/delete/:id
+ * DELETE /mascotas/:id
  * @async
  * @param {Object} req - Solicitud HTTP con ID en params
  * @param {Object} res - Respuesta HTTP
  * @returns {void}
  * @description Elimina una mascota del sistema
  */
-app.delete('/mascotas/delete/:id', verificarToken, async (req, res) => {
+app.delete('/mascotas/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
         
