@@ -180,6 +180,8 @@ class GenericRepository {
 const mascotaRepository = new GenericRepository('mascotas');
 const dueñoRepository = new GenericRepository('dueños');
 const usuarioRepository = new GenericRepository('usuarios');
+const productoRepository = new GenericRepository('productos');
+const reservacionRepository = new GenericRepository('reservaciones');
 
 // ============================================
 // MIDDLEWARE - VERIFICAR JWT
@@ -270,7 +272,10 @@ const swaggerOptions = {
                         especie: { type: 'string' },
                         edad: { type: 'integer' },
                         sexo: { type: 'string', enum: ['Macho', 'Hembra'] },
-                        id_dueño: { type: 'integer' }
+                        id_dueño: { type: 'integer' },
+                        motivo: { type: 'string' },
+                        producto_adicional_id: { type: 'integer' },
+                        cantidad_producto: { type: 'integer' }
                     }
                 },
                 Dueño: {
@@ -280,6 +285,33 @@ const swaggerOptions = {
                         nombre_completo: { type: 'string' },
                         telefono: { type: 'string' },
                         email: { type: 'string' }
+                    }
+                },
+                Producto: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer' },
+                        nombre: { type: 'string' },
+                        precio: { type: 'number' },
+                        cantidad: { type: 'integer' }
+                    }
+                },
+                Reservacion: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer' },
+                        nombre_cliente: { type: 'string' },
+                        telefono: { type: 'string' },
+                        email: { type: 'string' },
+                        nombre_mascota: { type: 'string' },
+                        especie: { type: 'string' },
+                        motivo_consulta: { type: 'string' },
+                        fecha_solicitada: { type: 'string', format: 'date' },
+                        hora_solicitada: { type: 'string', format: 'time' },
+                        tipo_cita: { type: 'string', enum: ['presencial', 'domicilio'] },
+                        estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada', 'reprogramar'] },
+                        producto_adicional_id: { type: 'integer' },
+                        cantidad_producto: { type: 'integer' }
                     }
                 }
             }
@@ -433,6 +465,10 @@ app.post('/auth/login', async (req, res) => {
     try {
         const { email, contraseña } = req.body;
 
+        // ASERCIONES PARA CREDENCIALES
+        console.assert(email && email.trim(), 'Email no puede estar vacío');
+        console.assert(contraseña && contraseña.trim(), 'Contraseña no puede estar vacía');
+
         if (!email || !contraseña) {
             return res.status(400).json({
                 error: 'Credenciales incompletas'
@@ -529,9 +565,11 @@ app.post('/auth/login', async (req, res) => {
 app.get('/mascotas', verificarToken, async (req, res) => {
     try {
         const query = `
-            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño
+            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño,
+                   p.nombre as nombre_producto, p.precio as precio_producto
             FROM mascotas m
             LEFT JOIN dueños d ON m.id_dueño = d.id
+            LEFT JOIN productos p ON m.producto_adicional_id = p.id
             ORDER BY m.fecha_creacion DESC
         `;
         
@@ -588,9 +626,11 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
         const query = `
-            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño
+            SELECT m.*, d.nombre_completo as nombre_dueño, d.telefono, d.email as email_dueño,
+                   p.nombre as nombre_producto, p.precio as precio_producto
             FROM mascotas m
             LEFT JOIN dueños d ON m.id_dueño = d.id
+            LEFT JOIN productos p ON m.producto_adicional_id = p.id
             WHERE m.id = ?
         `;
         
@@ -650,6 +690,12 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
  *                 type: string
  *               email:
  *                 type: string
+ *               motivo:
+ *                 type: string
+ *               producto_adicional_id:
+ *                 type: integer
+ *               cantidad_producto:
+ *                 type: integer
  *     responses:
  *       201:
  *         description: Mascota y dueño creados exitosamente
@@ -670,14 +716,18 @@ app.get('/mascotas/:id', verificarToken, async (req, res) => {
  * @param {string} req.body.nombre_dueño - Nombre del dueño
  * @param {string} req.body.telefono - Teléfono del dueño
  * @param {string} req.body.email - Email del dueño
+ * @param {string} req.body.motivo - Motivo de la consulta
+ * @param {number} req.body.producto_adicional_id - ID del producto adicional
+ * @param {number} req.body.cantidad_producto - Cantidad del producto
  * @param {Object} res - Respuesta HTTP
  * @returns {Object} Mascota y dueño creados
  * @description Crea un nuevo dueño y mascota en el sistema
  */
 app.post('/mascotas', verificarToken, async (req, res) => {
     try {
-        const { nombre, especie, edad, sexo, nombre_dueño, telefono, email } = req.body;
+        const { nombre, especie, edad, sexo, nombre_dueño, telefono, email, motivo, producto_adicional_id, cantidad_producto } = req.body;
         
+        // PROGRAMACIÓN DEFENSIVA: Validar campos requeridos
         if (!nombre || !especie || !edad || !sexo || !nombre_dueño || !telefono || !email) {
             return res.status(400).json({
                 error: 'Datos incompletos',
@@ -692,14 +742,33 @@ app.post('/mascotas', verificarToken, async (req, res) => {
             email
         });
 
-        // Crear mascota con el ID del dueño
-        const nuevaMascota = await mascotaRepository.create({
+        // Preparar datos de la mascota
+        const datosMascota = {
             nombre,
-            especie: especie.toLowerCase(), // Convertir a minúsculas para consistencia
+            especie: especie.toLowerCase(),
             edad,
             sexo,
             id_dueño: nuevoDueño.id
-        });
+        };
+
+        // Agregar campos opcionales si están presentes
+        if (motivo) datosMascota.motivo = motivo;
+        if (producto_adicional_id) datosMascota.producto_adicional_id = producto_adicional_id;
+        if (cantidad_producto) datosMascota.cantidad_producto = cantidad_producto;
+
+        // Crear mascota
+        const nuevaMascota = await mascotaRepository.create(datosMascota);
+
+        // Si se seleccionó un producto, actualizar el stock
+        if (producto_adicional_id && cantidad_producto) {
+            const producto = await productoRepository.getById(producto_adicional_id);
+            if (producto) {
+                const nuevaCantidad = producto.cantidad - cantidad_producto;
+                if (nuevaCantidad >= 0) {
+                    await productoRepository.update(producto_adicional_id, { cantidad: nuevaCantidad });
+                }
+            }
+        }
 
         res.status(201).json({
             mensaje: 'Mascota y dueño registrados exitosamente',
@@ -744,6 +813,8 @@ app.post('/mascotas', verificarToken, async (req, res) => {
  *                 type: integer
  *               sexo:
  *                 type: string
+ *               motivo:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Mascota actualizada
@@ -764,13 +835,14 @@ app.post('/mascotas', verificarToken, async (req, res) => {
 app.put('/mascotas/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, especie, edad, sexo } = req.body;
+        const { nombre, especie, edad, sexo, motivo } = req.body;
 
         const datosActualizar = {};
         if (nombre) datosActualizar.nombre = nombre;
         if (especie) datosActualizar.especie = especie.toLowerCase();
         if (edad) datosActualizar.edad = edad;
         if (sexo) datosActualizar.sexo = sexo;
+        if (motivo !== undefined) datosActualizar.motivo = motivo;
 
         const resultado = await mascotaRepository.update(id, datosActualizar);
         
@@ -867,6 +939,595 @@ app.delete('/mascotas/:id', verificarToken, async (req, res) => {
 });
 
 // ============================================
+// ENDPOINTS DE PRODUCTOS (PROTEGIDOS)
+// ============================================
+
+/**
+ * @swagger
+ * /productos:
+ *   get:
+ *     summary: Obtener todos los productos
+ *     tags:
+ *       - Productos
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de productos
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+
+/**
+ * GET /productos
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Array} Lista de productos
+ * @description Obtiene todos los productos del petshop
+ */
+app.get('/productos', verificarToken, async (req, res) => {
+    try {
+        const productos = await productoRepository.getAll();
+        res.status(200).json(productos);
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al obtener los productos',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /productos/stock:
+ *   get:
+ *     summary: Obtener productos con stock disponible
+ *     tags:
+ *       - Productos
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de productos con stock
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+
+/**
+ * GET /productos/stock
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Array} Lista de productos con stock disponible
+ * @description Obtiene productos que tienen cantidad mayor a 0
+ */
+app.get('/productos/stock', verificarToken, async (req, res) => {
+    try {
+        const query = 'SELECT * FROM productos WHERE cantidad > 0 ORDER BY nombre';
+        db.query(query, (err, results) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'Error al obtener productos con stock',
+                    mensaje: err.message
+                });
+            }
+            res.status(200).json(results);
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al obtener productos con stock',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /productos:
+ *   post:
+ *     summary: Crear nuevo producto
+ *     tags:
+ *       - Productos
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: ['nombre', 'precio', 'cantidad']
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               precio:
+ *                 type: number
+ *               cantidad:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Producto creado exitosamente
+ *       400:
+ *         description: Datos incompletos
+ *       401:
+ *         description: No autorizado
+ */
+
+/**
+ * POST /productos
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {string} req.body.nombre - Nombre del producto
+ * @param {number} req.body.precio - Precio del producto
+ * @param {number} req.body.cantidad - Cantidad disponible
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Object} Producto creado
+ * @description Crea un nuevo producto en el petshop
+ */
+app.post('/productos', verificarToken, async (req, res) => {
+    try {
+        const { nombre, precio, cantidad } = req.body;
+
+        // PROGRAMACIÓN DEFENSIVA: Validaciones
+        console.assert(nombre && nombre.trim(), 'Nombre del producto es requerido');
+        console.assert(precio && precio > 0, 'Precio debe ser mayor a 0');
+        console.assert(cantidad >= 0, 'Cantidad no puede ser negativa');
+
+        if (!nombre || !precio || cantidad === undefined) {
+            return res.status(400).json({
+                error: 'Datos incompletos',
+                mensaje: 'Se requieren: nombre, precio, cantidad'
+            });
+        }
+
+        const nuevoProducto = await productoRepository.create({
+            nombre: nombre.trim(),
+            precio: parseFloat(precio),
+            cantidad: parseInt(cantidad)
+        });
+
+        res.status(201).json({
+            mensaje: 'Producto creado exitosamente',
+            producto: nuevoProducto
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al crear el producto',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /productos/{id}:
+ *   put:
+ *     summary: Actualizar producto
+ *     tags:
+ *       - Productos
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               precio:
+ *                 type: number
+ *               cantidad:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Producto actualizado
+ *       401:
+ *         description: No autorizado
+ *       404:
+ *         description: Producto no encontrado
+ */
+
+/**
+ * PUT /productos/:id
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Object} Producto actualizado
+ * @description Actualiza un producto existente
+ */
+app.put('/productos/:id', verificarToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, precio, cantidad } = req.body;
+
+        const datosActualizar = {};
+        if (nombre) datosActualizar.nombre = nombre;
+        if (precio) datosActualizar.precio = parseFloat(precio);
+        if (cantidad !== undefined) datosActualizar.cantidad = parseInt(cantidad);
+
+        const resultado = await productoRepository.update(id, datosActualizar);
+        
+        res.status(200).json(resultado);
+    } catch(error) {
+        if (error.message === 'Registro no encontrado') {
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            });
+        }
+        res.status(500).json({
+            error: 'Error al actualizar el producto',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /productos/{id}:
+ *   delete:
+ *     summary: Eliminar producto
+ *     tags:
+ *       - Productos
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Producto eliminado
+ *       401:
+ *         description: No autorizado
+ *       404:
+ *         description: Producto no encontrado
+ */
+
+/**
+ * DELETE /productos/:id
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {void}
+ * @description Elimina un producto del sistema
+ */
+app.delete('/productos/:id', verificarToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await productoRepository.delete(id);
+        res.status(204).send();
+    } catch(error) {
+        if (error.message === 'Registro no encontrado') {
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            });
+        }
+        res.status(500).json({
+            error: 'Error al eliminar el producto',
+            mensaje: error.message
+        });
+    }
+});
+
+// ============================================
+// ENDPOINTS DE RESERVACIONES (PROTEGIDOS)
+// ============================================
+
+/**
+ * @swagger
+ * /reservaciones:
+ *   get:
+ *     summary: Obtener todas las reservaciones
+ *     tags:
+ *       - Reservaciones
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de reservaciones
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error del servidor
+ */
+
+/**
+ * GET /reservaciones
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Array} Lista de reservaciones
+ * @description Obtiene todas las reservaciones/citas del sistema
+ */
+app.get('/reservaciones', verificarToken, async (req, res) => {
+    try {
+        const query = `
+            SELECT r.*, p.nombre as nombre_producto, p.precio as precio_producto
+            FROM reservaciones r
+            LEFT JOIN productos p ON r.producto_adicional_id = p.id
+            ORDER BY r.fecha_solicitada DESC, r.hora_solicitada DESC
+        `;
+        
+        db.query(query, (err, results) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'Error al obtener las reservaciones',
+                    mensaje: err.message
+                });
+            }
+            res.status(200).json(results);
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al obtener las reservaciones',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /reservaciones:
+ *   post:
+ *     summary: Crear nueva reservación
+ *     tags:
+ *       - Reservaciones
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: ['nombre_cliente', 'telefono', 'email', 'nombre_mascota', 'especie', 'motivo_consulta', 'fecha_solicitada', 'hora_solicitada', 'tipo_cita']
+ *             properties:
+ *               nombre_cliente:
+ *                 type: string
+ *               telefono:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               nombre_mascota:
+ *                 type: string
+ *               especie:
+ *                 type: string
+ *               motivo_consulta:
+ *                 type: string
+ *               fecha_solicitada:
+ *                 type: string
+ *                 format: date
+ *               hora_solicitada:
+ *                 type: string
+ *                 format: time
+ *               tipo_cita:
+ *                 type: string
+ *                 enum: ['presencial', 'domicilio']
+ *               producto_adicional_id:
+ *                 type: integer
+ *               cantidad_producto:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Reservación creada exitosamente
+ *       400:
+ *         description: Datos incompletos
+ *       401:
+ *         description: No autorizado
+ */
+
+/**
+ * POST /reservaciones
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Object} Reservación creada
+ * @description Crea una nueva reservación/cita
+ */
+app.post('/reservaciones', verificarToken, async (req, res) => {
+    try {
+        const { 
+            nombre_cliente, telefono, email, nombre_mascota, especie, 
+            motivo_consulta, fecha_solicitada, hora_solicitada, tipo_cita,
+            producto_adicional_id, cantidad_producto 
+        } = req.body;
+
+        // PROGRAMACIÓN DEFENSIVA: Validar campos requeridos
+        if (!nombre_cliente || !telefono || !email || !nombre_mascota || !especie || 
+            !motivo_consulta || !fecha_solicitada || !hora_solicitada || !tipo_cita) {
+            return res.status(400).json({
+                error: 'Datos incompletos',
+                mensaje: 'Se requieren todos los campos: nombre_cliente, telefono, email, nombre_mascota, especie, motivo_consulta, fecha_solicitada, hora_solicitada, tipo_cita'
+            });
+        }
+
+        // Preparar datos de la reservación
+        const datosReservacion = {
+            nombre_cliente,
+            telefono,
+            email,
+            nombre_mascota,
+            especie: especie.toLowerCase(),
+            motivo_consulta,
+            fecha_solicitada,
+            hora_solicitada,
+            tipo_cita,
+            estado: 'pendiente'
+        };
+
+        // Agregar campos opcionales si están presentes
+        if (producto_adicional_id) datosReservacion.producto_adicional_id = producto_adicional_id;
+        if (cantidad_producto) datosReservacion.cantidad_producto = cantidad_producto;
+
+        const nuevaReservacion = await reservacionRepository.create(datosReservacion);
+
+        // Si se seleccionó un producto, actualizar el stock
+        if (producto_adicional_id && cantidad_producto) {
+            const producto = await productoRepository.getById(producto_adicional_id);
+            if (producto) {
+                const nuevaCantidad = producto.cantidad - cantidad_producto;
+                if (nuevaCantidad >= 0) {
+                    await productoRepository.update(producto_adicional_id, { cantidad: nuevaCantidad });
+                }
+            }
+        }
+
+        res.status(201).json({
+            mensaje: 'Reservación creada exitosamente',
+            reservacion: nuevaReservacion
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: 'Error al crear la reservación',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /reservaciones/{id}/estado:
+ *   put:
+ *     summary: Actualizar estado de reservación
+ *     tags:
+ *       - Reservaciones
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: ['estado']
+ *             properties:
+ *               estado:
+ *                 type: string
+ *                 enum: ['pendiente', 'confirmada', 'cancelada', 'reprogramar']
+ *     responses:
+ *       200:
+ *         description: Estado actualizado
+ *       401:
+ *         description: No autorizado
+ *       404:
+ *         description: Reservación no encontrada
+ */
+
+/**
+ * PUT /reservaciones/:id/estado
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {Object} Reservación actualizada
+ * @description Actualiza el estado de una reservación
+ */
+app.put('/reservaciones/:id/estado', verificarToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { estado } = req.body;
+
+        // PROGRAMACIÓN DEFENSIVA: Validar estado
+        const estadosValidos = ['pendiente', 'confirmada', 'cancelada', 'reprogramar'];
+        if (!estadosValidos.includes(estado)) {
+            return res.status(400).json({
+                error: 'Estado inválido',
+                mensaje: 'El estado debe ser: pendiente, confirmada, cancelada o reprogramar'
+            });
+        }
+
+        const resultado = await reservacionRepository.update(id, { estado });
+        
+        res.status(200).json({
+            mensaje: 'Estado actualizado exitosamente',
+            reservacion: resultado
+        });
+    } catch(error) {
+        if (error.message === 'Registro no encontrado') {
+            return res.status(404).json({
+                error: 'Reservación no encontrada'
+            });
+        }
+        res.status(500).json({
+            error: 'Error al actualizar el estado',
+            mensaje: error.message
+        });
+    }
+});
+
+/**
+ * @swagger
+ * /reservaciones/{id}:
+ *   delete:
+ *     summary: Eliminar reservación
+ *     tags:
+ *       - Reservaciones
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Reservación eliminada
+ *       401:
+ *         description: No autorizado
+ *       404:
+ *         description: Reservación no encontrada
+ */
+
+/**
+ * DELETE /reservaciones/:id
+ * @async
+ * @param {Object} req - Solicitud HTTP
+ * @param {Object} res - Respuesta HTTP
+ * @returns {void}
+ * @description Elimina una reservación del sistema
+ */
+app.delete('/reservaciones/:id', verificarToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await reservacionRepository.delete(id);
+        res.status(204).send();
+    } catch(error) {
+        if (error.message === 'Registro no encontrado') {
+            return res.status(404).json({
+                error: 'Reservación no encontrada'
+            });
+        }
+        res.status(500).json({
+            error: 'Error al eliminar la reservación',
+            mensaje: error.message
+        });
+    }
+});
+
+// ============================================
 // ENDPOINTS DE REPORTES
 // ============================================
 
@@ -899,6 +1560,9 @@ app.get('/reportes/estadisticas', verificarToken, async (req, res) => {
         const queries = {
             totalMascotas: 'SELECT COUNT(*) as total FROM mascotas',
             totalDueños: 'SELECT COUNT(*) as total FROM dueños',
+            totalProductos: 'SELECT COUNT(*) as total FROM productos',
+            totalReservaciones: 'SELECT COUNT(*) as total FROM reservaciones',
+            reservacionesPendientes: 'SELECT COUNT(*) as total FROM reservaciones WHERE estado = "pendiente"',
             mascotasEsteMes: `
                 SELECT COUNT(*) as total FROM mascotas 
                 WHERE MONTH(fecha_creacion) = MONTH(CURRENT_DATE()) 
@@ -916,6 +1580,17 @@ app.get('/reportes/estadisticas', verificarToken, async (req, res) => {
                 FROM mascotas 
                 WHERE sexo IS NOT NULL 
                 GROUP BY sexo
+            `,
+            productosStockBajo: `
+                SELECT nombre, cantidad 
+                FROM productos 
+                WHERE cantidad < 10 
+                ORDER BY cantidad ASC
+            `,
+            reservacionesPorEstado: `
+                SELECT estado, COUNT(*) as cantidad 
+                FROM reservaciones 
+                GROUP BY estado
             `,
             distribucionEdad: `
                 SELECT 
