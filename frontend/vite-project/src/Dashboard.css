@@ -1581,7 +1581,6 @@ body {
   background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
-/* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: #667eea #f1f1f1;
