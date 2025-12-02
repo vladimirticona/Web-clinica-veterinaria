@@ -1,6 +1,6 @@
 /**
  * @fileoverview Componente principal con Dashboard, Reportes y React Icons
- * @description Incluye login, dashboard con sidebar y gestión completa
+ * @description Incluye login, dashboard y gestión completa
  * @version 4.0.0
  * @author dev.ticma
  */
@@ -820,9 +820,9 @@ const App = () => {
           )}
 
           <div className="credentials-info">
-            <p><strong>Credenciales de prueba:</strong></p>
-            <p>Email: admin@clinica.com</p>
-            <p>Contraseña: 123456</p>
+            <p><strong>Credenciales:</strong></p>
+            <p>Email: </p>
+            <p>Contraseña: </p>
           </div>
         </div>
       </div>

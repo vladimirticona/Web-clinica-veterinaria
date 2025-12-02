@@ -1,4 +1,4 @@
-/*Este es App.css*/
+
 * {
   margin: 0;
   padding: 0;
@@ -400,7 +400,6 @@ button {
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   header h1 {
     font-size: 1.5rem;
