@@ -1,6 +1,6 @@
 /**
  * @fileoverview Componente principal con Dashboard, Reportes y React Icons
- * @description Incluye login, dashboard y gestión completa
+ * @description Incluye login, dashboard y gestión completada
  * @version 4.0.0
  * @author dev.ticma
  */
