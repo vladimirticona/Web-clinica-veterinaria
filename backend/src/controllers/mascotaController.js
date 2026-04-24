@@ -3,11 +3,24 @@
  * @requires ../models/mascotaRepository
  * @requires ../models/dueñoRepository
  * @requires ../models/productoRepository
+ * @requires ../domain/Mascota
+ * @requires ../domain/Dueño
+ * @requires ../domain/Email
+ * @requires ../domain/Telefono
+ * @requires ../domain/Dni
+ * @requires ../domain/Precio
  */
 
 const mascotaRepository = require('../models/mascotaRepository');
 const dueñoRepository = require('../models/dueñoRepository');
 const productoRepository = require('../models/productoRepository');
+
+const Mascota = require('../domain/Mascota');
+const Dueño = require('../domain/Dueño');
+const Email = require('../domain/Email');
+const Telefono = require('../domain/Telefono');
+const Dni = require('../domain/Dni');
+const Precio = require('../domain/Precio');
 
 const mascotaController = {
     // ============================================
@@ -100,20 +113,28 @@ const mascotaController = {
                 });
             }
 
-            // Crear dueño primero
+            // Crear Value Objects y entidades del dominio para validación
+            const emailVO = new Email(email);
+            const telefonoVO = new Telefono(telefono);
+            const dueñoDomain = new Dueño(null, nombre_dueño, emailVO, telefonoVO);
+
+            // Crear dueño en la base de datos
             const nuevoDueño = await dueñoRepository.create({
                 nombre_completo: nombre_dueño,
-                telefono,
-                email
+                telefono: telefonoVO.value,
+                email: emailVO.value
             });
+
+            // Crear entidad Mascota para validación
+            const mascotaDomain = new Mascota(null, nombre, new Date(), nuevoDueño.id, producto_adicional_id || null);
 
             // Preparar datos de la mascota
             const datosMascota = {
-                nombre,
+                nombre: mascotaDomain.nombre,
                 especie: especie.toLowerCase(),
                 edad,
                 sexo,
-                id_dueño: nuevoDueño.id
+                id_dueño: mascotaDomain.idDueño
             };
 
             // Agregar campos opcionales si están presentes
