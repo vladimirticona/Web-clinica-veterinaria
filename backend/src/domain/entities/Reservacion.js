@@ -29,6 +29,52 @@ class Reservacion {
       throw new Error('Estado invalido. Debe ser: pendiente, confirmada, cancelada o reprogramar');
     }
   }
+
+  confirmar() {
+    this.estado = 'confirmada';
+  }
+
+  cancelar() {
+    this.estado = 'cancelada';
+  }
+
+  reprogramar(nuevaFecha, nuevaHora) {
+    if (!nuevaFecha || !nuevaHora) {
+      throw new Error('Fecha y hora nuevas son requeridas para reprogramar');
+    }
+    this.fecha_solicitada = nuevaFecha;
+    this.hora_solicitada = nuevaHora;
+    this.estado = 'reprogramar';
+  }
+
+  cambiarMotivo(nuevoMotivo) {
+    this.motivo_consulta = nuevoMotivo;
+  }
+
+  asignarProducto(productoId, cantidad) {
+    this.producto_adicional_id = productoId;
+    this.cantidad_producto = cantidad;
+  }
+
+  esPendiente() {
+    return this.estado === 'pendiente';
+  }
+
+  esConfirmada() {
+    return this.estado === 'confirmada';
+  }
+
+  obtenerResumen() {
+    return {
+      id: this.id,
+      cliente: this.nombre_cliente,
+      mascota: this.nombre_mascota,
+      fecha: this.fecha_solicitada,
+      hora: this.hora_solicitada,
+      estado: this.estado,
+      tipo: this.tipo_cita
+    };
+  }
 }
 
 module.exports = Reservacion;

@@ -46,7 +46,31 @@ class MascotaService extends IMascotaService {
   }
 
   async actualizar(id, datos) {
-    return await this.mascotaRepository.update(id, datos);
+    const mascotaExistente = await this.mascotaRepository.getById(id);
+    if (!mascotaExistente) throw new Error('Mascota no encontrada');
+
+    const mascota = new Mascota(mascotaExistente);
+
+    // Aplicar cambios usando métodos del dominio
+    if (datos.nombre) mascota.cambiarNombre(datos.nombre);
+    if (datos.motivo) mascota.cambiarMotivo(datos.motivo);
+    if (datos.producto_adicional_id !== undefined) {
+      mascota.asignarProducto(datos.producto_adicional_id, datos.cantidad_producto || 0);
+    }
+
+    // Validar después de cambios
+    mascota.validar();
+
+    return await this.mascotaRepository.update(id, {
+      nombre: mascota.nombre,
+      especie: mascota.especie,
+      edad: mascota.edad,
+      sexo: mascota.sexo,
+      motivo: mascota.motivo,
+      id_dueño: mascota.id_dueño,
+      producto_adicional_id: mascota.producto_adicional_id,
+      cantidad_producto: mascota.cantidad_producto
+    });
   }
 
   async eliminar(id) {
