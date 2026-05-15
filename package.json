@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
   "dependencies": {
     "react-icons": "^5.5.0"
   }
