@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const MySQLMascotaRepository = require('./src/infrastructure/persistence/MySQLMascotaRepository');
@@ -45,6 +46,7 @@ const productoController = new ProductoController(productoService);
 const authController = new AuthController(usuarioService);
 const veterinarioController = new VeterinarioController(veterinarioService);
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRoutes(authController));

@@ -3,5 +3,6 @@ const router = express.Router();
 
 module.exports = (authController) => {
   router.post('/login', authController.login);
+  router.post('/registro', authController.registro);
   return router;
 };
