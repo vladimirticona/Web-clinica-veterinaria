@@ -490,7 +490,7 @@ const App = () => {
     axios
       .post(`${BASE_URL}/auth/login`, {
         email: loginEmail,
-        contraseña: loginPassword
+        password: loginPassword
       })
       .then((response) => {
         const { token, usuario } = response.data;
@@ -531,7 +531,7 @@ const App = () => {
       .post(`${BASE_URL}/auth/registro`, {
         nombre_completo: regNombre,
         email: regEmail,
-        contraseña: regPassword
+        password: regPassword
       })
       .then((response) => {
         setError("");
