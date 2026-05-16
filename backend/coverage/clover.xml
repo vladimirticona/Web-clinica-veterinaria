@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1778890991506" clover="3.2.0">
+  <project timestamp="1778890991506" name="All files">
+    <metrics statements="673" coveredstatements="182" conditionals="247" coveredconditionals="112" methods="228" coveredmethods="46" elements="1148" coveredelements="340" complexity="0" loc="673" ncloc="673" packages="9" files="38" classes="38"/>
+    <package name="application.services">
+      <metrics statements="145" coveredstatements="62" conditionals="74" coveredconditionals="19" methods="33" coveredmethods="13"/>
+      <file name="MascotaService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\application\services\MascotaService.js">
+        <metrics statements="36" coveredstatements="35" conditionals="22" coveredconditionals="15" methods="6" coveredmethods="6"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="6" count="13" type="stmt"/>
+        <line num="7" count="13" type="stmt"/>
+        <line num="8" count="13" type="stmt"/>
+        <line num="9" count="13" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="35" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="37" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="50" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="55" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="57" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="78" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="84" count="2" type="stmt"/>
+      </file>
+      <file name="ProductoService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\application\services\ProductoService.js">
+        <metrics statements="21" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+      </file>
+      <file name="ReservacionService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\application\services\ReservacionService.js">
+        <metrics statements="39" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="57" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+      </file>
+      <file name="UsuarioService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\application\services\UsuarioService.js">
+        <metrics statements="28" coveredstatements="27" conditionals="4" coveredconditionals="4" methods="8" coveredmethods="7"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="9" count="9" type="stmt"/>
+        <line num="10" count="9" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="53" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+      </file>
+      <file name="VeterinarioService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\application\services\VeterinarioService.js">
+        <metrics statements="21" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="domain.entities">
+      <metrics statements="124" coveredstatements="115" conditionals="90" coveredconditionals="89" methods="41" coveredmethods="33"/>
+      <file name="Mascota.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\entities\Mascota.js">
+        <metrics statements="22" coveredstatements="22" conditionals="14" coveredconditionals="14" methods="7" coveredmethods="7"/>
+        <line num="3" count="20" type="stmt"/>
+        <line num="4" count="20" type="stmt"/>
+        <line num="5" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="20" type="stmt"/>
+        <line num="7" count="20" type="stmt"/>
+        <line num="8" count="20" type="stmt"/>
+        <line num="9" count="20" type="stmt"/>
+        <line num="10" count="20" type="stmt"/>
+        <line num="11" count="20" type="stmt"/>
+        <line num="15" count="10" type="cond" truecount="6" falsecount="0"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="18" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="24" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="55" count="3" type="stmt"/>
+      </file>
+      <file name="Producto.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\entities\Producto.js">
+        <metrics statements="25" coveredstatements="24" conditionals="18" coveredconditionals="18" methods="8" coveredmethods="7"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="5" count="16" type="stmt"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="10" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="22" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="29" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="36" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="43" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+      </file>
+      <file name="Reservacion.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\entities\Reservacion.js">
+        <metrics statements="32" coveredstatements="26" conditionals="21" coveredconditionals="20" methods="11" coveredmethods="6"/>
+        <line num="3" count="10" type="stmt"/>
+        <line num="4" count="10" type="stmt"/>
+        <line num="5" count="10" type="stmt"/>
+        <line num="6" count="10" type="stmt"/>
+        <line num="7" count="10" type="stmt"/>
+        <line num="8" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="9" count="10" type="stmt"/>
+        <line num="10" count="10" type="stmt"/>
+        <line num="11" count="10" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="13" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="10" type="stmt"/>
+        <line num="15" count="10" type="stmt"/>
+        <line num="19" count="2" type="cond" truecount="11" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="28" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="42" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+      </file>
+      <file name="Usuario.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\entities\Usuario.js">
+        <metrics statements="26" coveredstatements="24" conditionals="22" coveredconditionals="22" methods="9" coveredmethods="7"/>
+        <line num="3" count="26" type="stmt"/>
+        <line num="4" count="26" type="stmt"/>
+        <line num="5" count="26" type="stmt"/>
+        <line num="6" count="26" type="stmt"/>
+        <line num="7" count="26" type="stmt"/>
+        <line num="11" count="8" type="cond" truecount="5" falsecount="0"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="20" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="27" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="34" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="42" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+      </file>
+      <file name="Veterinario.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\entities\Veterinario.js">
+        <metrics statements="19" coveredstatements="19" conditionals="15" coveredconditionals="15" methods="6" coveredmethods="6"/>
+        <line num="3" count="14" type="stmt"/>
+        <line num="4" count="14" type="stmt"/>
+        <line num="5" count="14" type="stmt"/>
+        <line num="6" count="14" type="stmt"/>
+        <line num="7" count="14" type="stmt"/>
+        <line num="8" count="14" type="stmt"/>
+        <line num="12" count="5" type="cond" truecount="5" falsecount="0"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="21" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="32" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="domain.ports">
+      <metrics statements="65" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="55" coveredmethods="0"/>
+      <file name="IMascotaRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IMascotaRepository.js">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+      </file>
+      <file name="IMascotaService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IMascotaService.js">
+        <metrics statements="6" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+      </file>
+      <file name="IProductoRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IProductoRepository.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="IProductoService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IProductoService.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="IReservacionRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IReservacionRepository.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="IReservacionService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IReservacionService.js">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="IUsuarioRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IUsuarioRepository.js">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+      <file name="IUsuarioService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IUsuarioService.js">
+        <metrics statements="8" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+      </file>
+      <file name="IVeterinarioRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IVeterinarioRepository.js">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+      <file name="IVeterinarioService.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\domain\ports\IVeterinarioService.js">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="infrastructure.config">
+      <metrics statements="15" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="4" coveredmethods="0"/>
+      <file name="database.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\config\database.js">
+        <metrics statements="15" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="infrastructure.http.controllers">
+      <metrics statements="132" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="26" coveredmethods="0"/>
+      <file name="authController.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\controllers\authController.js">
+        <metrics statements="14" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+      </file>
+      <file name="mascotaController.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\controllers\mascotaController.js">
+        <metrics statements="31" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+      </file>
+      <file name="productoController.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\controllers\productoController.js">
+        <metrics statements="24" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+      </file>
+      <file name="reservacionController.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\controllers\reservacionController.js">
+        <metrics statements="25" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+      </file>
+      <file name="veterinarioController.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\controllers\veterinarioController.js">
+        <metrics statements="38" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="infrastructure.http.middlewares">
+      <metrics statements="12" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="authMiddleware.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\middlewares\authMiddleware.js">
+        <metrics statements="12" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="infrastructure.http.routes">
+      <metrics statements="41" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="authRoutes.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\routes\authRoutes.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="mascotaRoutes.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\routes\mascotaRoutes.js">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+      </file>
+      <file name="productoRoutes.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\routes\productoRoutes.js">
+        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="reservacionRoutes.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\routes\reservacionRoutes.js">
+        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="veterinarioRoutes.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\http\routes\veterinarioRoutes.js">
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="infrastructure.persistence">
+      <metrics statements="136" coveredstatements="0" conditionals="50" coveredconditionals="0" methods="63" coveredmethods="0"/>
+      <file name="MySQLMascotaRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\persistence\MySQLMascotaRepository.js">
+        <metrics statements="31" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="18" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+      </file>
+      <file name="MySQLProductoRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\persistence\MySQLProductoRepository.js">
+        <metrics statements="25" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+      </file>
+      <file name="MySQLReservacionRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\persistence\MySQLReservacionRepository.js">
+        <metrics statements="26" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+      </file>
+      <file name="MySQLUsuarioRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\persistence\MySQLUsuarioRepository.js">
+        <metrics statements="28" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+      </file>
+      <file name="MySQLVeterinarioRepository.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\infrastructure\persistence\MySQLVeterinarioRepository.js">
+        <metrics statements="26" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="4" methods="0" coveredmethods="0"/>
+      <file name="constants.js" path="C:\Users\LENOVO\Downloads\Web-clinica-veterinaria\backend\src\utils\constants.js">
+        <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="4" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="2" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="4" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

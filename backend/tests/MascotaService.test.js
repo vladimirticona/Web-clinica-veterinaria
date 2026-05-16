@@ -114,4 +114,51 @@ describe('MascotaService', () => {
       await expect(mascotaService.crear(datos)).rejects.toThrow('Faltan campos requeridos: nombre, especie, edad, sexo');
     });
   });
+
+  describe('actualizar', () => {
+    test('debe actualizar mascota existente correctamente', async () => {
+      const mascotaExistente = {
+        id: 1,
+        nombre: 'Firulais',
+        especie: 'perro',
+        edad: 3,
+        sexo: 'Macho',
+        motivo: 'Vacunación',
+        id_dueño: 1
+      };
+      const datos = { nombre: 'Rex', motivo: 'Consulta' };
+      const mascotaActualizada = { ...mascotaExistente, nombre: 'Rex', motivo: 'Consulta' };
+
+      mockMascotaRepository.getById.mockResolvedValue(mascotaExistente);
+      mockMascotaRepository.update.mockResolvedValue(mascotaActualizada);
+
+      const result = await mascotaService.actualizar(1, datos);
+      expect(mockMascotaRepository.getById).toHaveBeenCalledWith(1);
+      expect(mockMascotaRepository.update).toHaveBeenCalledWith(1, expect.objectContaining({ nombre: 'Rex', motivo: 'Consulta' }));
+      expect(result).toEqual(mascotaActualizada);
+    });
+
+    test('debe lanzar error si mascota no existe al actualizar', async () => {
+      mockMascotaRepository.getById.mockResolvedValue(null);
+      await expect(mascotaService.actualizar(1, { nombre: 'Rex' })).rejects.toThrow('Mascota no encontrada');
+    });
+  });
+
+  describe('eliminar', () => {
+    test('debe eliminar mascota existente y retornar id_dueño', async () => {
+      const mascotaExistente = { id: 1, nombre: 'Firulais', id_dueño: 5 };
+      mockMascotaRepository.getById.mockResolvedValue(mascotaExistente);
+      mockMascotaRepository.delete.mockResolvedValue(true);
+
+      const result = await mascotaService.eliminar(1);
+      expect(mockMascotaRepository.getById).toHaveBeenCalledWith(1);
+      expect(mockMascotaRepository.delete).toHaveBeenCalledWith(1);
+      expect(result).toBe(5);
+    });
+
+    test('debe lanzar error si mascota no existe al eliminar', async () => {
+      mockMascotaRepository.getById.mockResolvedValue(null);
+      await expect(mascotaService.eliminar(1)).rejects.toThrow('Mascota no encontrada');
+    });
+  });
 });

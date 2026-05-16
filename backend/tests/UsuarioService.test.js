@@ -83,5 +83,41 @@ describe('UsuarioService', () => {
     });
   });
 
-  // Agregar más tests para otros métodos si es necesario
+  describe('métodos CRUD', () => {
+    test('debe obtener usuario por id', async () => {
+      const usuario = { id: 1, nombre: 'Juan Pérez', email: 'juan@example.com' };
+      mockUsuarioRepository.obtenerPorId.mockResolvedValue(usuario);
+
+      const result = await usuarioService.obtenerUsuarioPorId(1);
+      expect(mockUsuarioRepository.obtenerPorId).toHaveBeenCalledWith(1);
+      expect(result).toEqual(usuario);
+    });
+
+    test('debe obtener todos los usuarios', async () => {
+      const usuarios = [{ id: 1, nombre: 'Juan Pérez' }];
+      mockUsuarioRepository.obtenerTodos.mockResolvedValue(usuarios);
+
+      const result = await usuarioService.obtenerTodosLosUsuarios();
+      expect(mockUsuarioRepository.obtenerTodos).toHaveBeenCalled();
+      expect(result).toEqual(usuarios);
+    });
+
+    test('debe actualizar usuario correctamente', async () => {
+      const usuarioData = { nombre: 'Carlos', email: 'carlos@example.com', password: 'newpassword', rol: 'admin' };
+      const updatedUsuario = new Usuario(1, usuarioData.nombre, usuarioData.email, usuarioData.password, usuarioData.rol);
+      mockUsuarioRepository.actualizar.mockResolvedValue(updatedUsuario);
+
+      const result = await usuarioService.actualizarUsuario(1, usuarioData);
+      expect(mockUsuarioRepository.actualizar).toHaveBeenCalledWith(1, expect.any(Usuario));
+      expect(result).toEqual(updatedUsuario);
+    });
+
+    test('debe eliminar usuario correctamente', async () => {
+      mockUsuarioRepository.eliminar.mockResolvedValue(true);
+
+      const result = await usuarioService.eliminarUsuario(1);
+      expect(mockUsuarioRepository.eliminar).toHaveBeenCalledWith(1);
+      expect(result).toBe(true);
+    });
+  });
 });

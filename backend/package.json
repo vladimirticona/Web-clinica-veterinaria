@@ -9,6 +9,14 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/domain/**/*.{js,jsx}",
+      "src/application/**/*.{js,jsx}"
+    ],
+    "coveragePathIgnorePatterns": ["/node_modules/", "/tests/", "/coverage/"]
+  },
   "author": "dev.ticma",
   "license": "ISC",
   "dependencies": {
