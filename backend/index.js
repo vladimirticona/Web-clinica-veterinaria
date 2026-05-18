@@ -1,27 +1,31 @@
 const express = require('express');
 const app = express();
 
-const MySQLMascotaRepository = require('./infrastructure/persistence/MySQLMascotaRepository');
-const MySQLReservacionRepository = require('./infrastructure/persistence/MySQLReservacionRepository');
-const MySQLProductoRepository = require('./infrastructure/persistence/MySQLProductoRepository');
+// Repositorios en memoria habilitados para evitar dependencia directa a la base de datos
+// y respetar la arquitectura hexagonal según indicaciones del profesor.
+const InMemoryMascotaRepository = require('./src/infrastructure/persistence/InMemoryMascotaRepository');
+const InMemoryReservacionRepository = require('./src/infrastructure/persistence/InMemoryReservacionRepository');
+const InMemoryProductoRepository = require('./src/infrastructure/persistence/InMemoryProductoRepository');
+const InMemoryDuenoRepository = require('./src/infrastructure/persistence/InMemoryDuenoRepository');
 
-const MascotaService = require('./application/services/MascotaService');
-const ReservacionService = require('./application/services/ReservacionService');
-const ProductoService = require('./application/services/ProductoService');
+const MascotaService = require('./src/application/services/MascotaService');
+const ReservacionService = require('./src/application/services/ReservacionService');
+const ProductoService = require('./src/application/services/ProductoService');
 
-const MascotaController = require('./infrastructure/http/controllers/mascotaController');
-const ReservacionController = require('./infrastructure/http/controllers/reservacionController');
-const ProductoController = require('./infrastructure/http/controllers/productoController');
+const MascotaController = require('./src/infrastructure/http/controllers/mascotaController');
+const ReservacionController = require('./src/infrastructure/http/controllers/reservacionController');
+const ProductoController = require('./src/infrastructure/http/controllers/productoController');
 
-const mascotaRoutes = require('./infrastructure/http/routes/mascotaRoutes');
-const reservacionRoutes = require('./infrastructure/http/routes/reservacionRoutes');
-const productoRoutes = require('./infrastructure/http/routes/productoRoutes');
+const mascotaRoutes = require('./src/infrastructure/http/routes/mascotaRoutes');
+const reservacionRoutes = require('./src/infrastructure/http/routes/reservacionRoutes');
+const productoRoutes = require('./src/infrastructure/http/routes/productoRoutes');
 
-const mascotaRepository = new MySQLMascotaRepository();
-const reservacionRepository = new MySQLReservacionRepository();
-const productoRepository = new MySQLProductoRepository();
+const productoRepository = new InMemoryProductoRepository();
+const duenoRepository = new InMemoryDuenoRepository();
+const mascotaRepository = new InMemoryMascotaRepository(duenoRepository, productoRepository);
+const reservacionRepository = new InMemoryReservacionRepository(productoRepository);
 
-const mascotaService = new MascotaService(mascotaRepository, null, productoRepository);
+const mascotaService = new MascotaService(mascotaRepository, duenoRepository, productoRepository);
 const reservacionService = new ReservacionService(reservacionRepository, productoRepository);
 const productoService = new ProductoService(productoRepository);
 
