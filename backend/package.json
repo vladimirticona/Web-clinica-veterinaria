@@ -7,6 +7,7 @@
     "start": "node index.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "cucumber": "cucumber-js ../features --require ../features/steps/*.steps.js",
     "dev": "nodemon index.js"
   },
   "author": "dev.ticma",
@@ -22,6 +23,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.9.0",
     "jest": "^30.4.2"
   }
 }
