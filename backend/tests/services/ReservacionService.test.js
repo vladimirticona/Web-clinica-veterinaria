@@ -58,4 +58,49 @@ describe('ReservacionService', () => {
     await reservacionService.eliminar(1);
     expect(mockReservacionRepository.delete).toHaveBeenCalledTimes(1);
   });
+
+  test('CP - eliminar reservacion inexistente debe lanzar error', async () => {
+    mockReservacionRepository.getById.mockResolvedValue(null);
+    await expect(reservacionService.eliminar(99)).rejects.toThrow('Reservacion no encontrada');
+  });
+
+  test('CP - crear reservacion con producto adicional debe actualizar stock', async () => {
+    const datos = {
+      nombre_cliente: 'Juan Perez',
+      telefono: '999888777',
+      email: 'juan@gmail.com',
+      nombre_mascota: 'Firulais',
+      especie: 'perro',
+      motivo_consulta: 'Consulta general',
+      fecha_solicitada: '2024-06-01',
+      hora_solicitada: '10:00',
+      tipo_cita: 'consulta',
+      producto_adicional_id: 1,
+      cantidad_producto: 2
+    };
+    const reservacionFake = { id: 1, ...datos };
+    mockReservacionRepository.create.mockResolvedValue(reservacionFake);
+    mockProductoRepository.getById.mockResolvedValue({ id: 1, cantidad: 10 });
+    mockProductoRepository.update.mockResolvedValue({ id: 1, cantidad: 8 });
+    await reservacionService.crear(datos);
+    expect(mockProductoRepository.update).toHaveBeenCalledTimes(1);
+  });
+
+  test('CP - crear reservacion sin producto adicional no debe actualizar stock', async () => {
+    const datos = {
+      nombre_cliente: 'Juan Perez',
+      telefono: '999888777',
+      email: 'juan@gmail.com',
+      nombre_mascota: 'Firulais',
+      especie: 'perro',
+      motivo_consulta: 'Consulta general',
+      fecha_solicitada: '2024-06-01',
+      hora_solicitada: '10:00',
+      tipo_cita: 'consulta'
+    };
+    const reservacionFake = { id: 1, ...datos };
+    mockReservacionRepository.create.mockResolvedValue(reservacionFake);
+    await reservacionService.crear(datos);
+    expect(mockProductoRepository.update).not.toHaveBeenCalled();
+  });
 });

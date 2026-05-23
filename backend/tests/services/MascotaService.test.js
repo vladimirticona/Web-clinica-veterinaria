@@ -76,4 +76,49 @@ describe('MascotaService', () => {
     await mascotaService.crear(datos);
     expect(mockDueñoRepository.create).toHaveBeenCalledTimes(1);
   });
+
+  test('CP - eliminar mascota inexistente debe lanzar error', async () => {
+    mockMascotaRepository.getById.mockResolvedValue(null);
+    await expect(mascotaService.eliminar(99)).rejects.toThrow('Mascota no encontrada');
+  });
+
+  test('CP - crear mascota con producto adicional debe actualizar stock', async () => {
+    mockDueñoRepository.create.mockResolvedValue({ id: 1 });
+    mockMascotaRepository.create.mockResolvedValue({ id: 1, nombre: 'Firulais' });
+    mockProductoRepository.getById.mockResolvedValue({ id: 1, cantidad: 10 });
+    mockProductoRepository.update.mockResolvedValue({ id: 1, cantidad: 8 });
+    const datos = {
+      nombre: 'Firulais',
+      especie: 'perro',
+      edad: 3,
+      sexo: 'Macho',
+      nombre_dueño: 'Juan Perez',
+      telefono: '999888777',
+      email: 'juan@gmail.com',
+      producto_adicional_id: 1,
+      cantidad_producto: 2
+    };
+    await mascotaService.crear(datos);
+    expect(mockProductoRepository.update).toHaveBeenCalledTimes(1);
+  });
+
+  test('CP - crear mascota con datos del dueño correctos', async () => {
+    mockDueñoRepository.create.mockResolvedValue({ id: 1 });
+    mockMascotaRepository.create.mockResolvedValue({ id: 1, nombre: 'Firulais' });
+    const datos = {
+      nombre: 'Firulais',
+      especie: 'perro',
+      edad: 3,
+      sexo: 'Macho',
+      nombre_dueño: 'Juan Perez',
+      telefono: '999888777',
+      email: 'juan@gmail.com'
+    };
+    await mascotaService.crear(datos);
+    expect(mockDueñoRepository.create).toHaveBeenCalledWith({
+      nombre_completo: 'Juan Perez',
+      telefono: '999888777',
+      email: 'juan@gmail.com'
+    });
+  });
 });

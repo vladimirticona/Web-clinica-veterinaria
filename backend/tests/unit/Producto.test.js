@@ -27,4 +27,20 @@ describe('Producto', () => {
     const producto = new Producto({ id: 1, nombre: 'Vacuna', cantidad: 10 });
     expect(() => producto.validar()).toThrow('Faltan campos requeridos');
   });
+
+  test('CP - reducir stock con cantidad exactamente igual al stock debe lanzar error (valor limite)', () => {
+    const producto = new Producto({ id: 1, nombre: 'Vacuna', precio: 50, cantidad: 5 });
+    expect(() => producto.reducirStock(5)).not.toThrow();
+    expect(producto.cantidad).toBe(0);
+  });
+
+  test('CP - reducir stock con cantidad mayor en uno al stock debe lanzar error (valor limite)', () => {
+    const producto = new Producto({ id: 1, nombre: 'Vacuna', precio: 50, cantidad: 5 });
+    expect(() => producto.reducirStock(6)).toThrow('Stock insuficiente');
+  });
+
+  test('CP - crear producto sin nombre ni precio debe lanzar error', () => {
+    const producto = new Producto({ id: 1, cantidad: 10 });
+    expect(() => producto.validar()).toThrow('Faltan campos requeridos');
+  });
 });

@@ -37,4 +37,24 @@ describe('Reservacion', () => {
     const reservacion = new Reservacion(datosPrueba);
     expect(() => reservacion.validarEstado('confirmada')).not.toThrow();
   });
+
+  test('CP - especie debe guardarse en minusculas en reservacion', () => {
+    const reservacion = new Reservacion({ ...datosPrueba, especie: 'PERRO' });
+    expect(reservacion.especie).toBe('perro');
+  });
+
+  test('CP - estado valido pendiente no debe lanzar error', () => {
+    const reservacion = new Reservacion(datosPrueba);
+    expect(() => reservacion.validarEstado('pendiente')).not.toThrow();
+  });
+
+  test('CP - estado valido cancelada no debe lanzar error', () => {
+    const reservacion = new Reservacion(datosPrueba);
+    expect(() => reservacion.validarEstado('cancelada')).not.toThrow();
+  });
+
+  test('CP - estado valido reprogramar no debe lanzar error', () => {
+    const reservacion = new Reservacion(datosPrueba);
+    expect(() => reservacion.validarEstado('reprogramar')).not.toThrow();
+  });
 });
