@@ -1,0 +1,32 @@
+{
+  "proyecto": "Web-Clinica-Veterinaria",
+  "version": "MVP v1.1",
+  "fecha": "2026-06-19",
+  "rama": "feat/setup-ci",
+  "autor": "vladimirticona",
+  "cambios": [
+    {
+      "id": "PR-004",
+      "titulo": "ci: agregar workflow de GitHub Actions",
+      "tipo": "Configuracion de CI",
+      "estado": "Aprobado",
+      "revisor": "Roger Huanca",
+      "fecha_merge": "2026-06-19"
+    },
+    {
+      "id": "PR-005",
+      "titulo": "feat: cambio deliberado para simular rechazo",
+      "tipo": "Simulacion de error",
+      "estado": "Rechazado",
+      "motivo": "Test fallido y cobertura insuficiente",
+      "fecha": "2026-06-19"
+    }
+  ],
+  "cobertura_actual": {
+    "statements": 90.56,
+    "branches": 90.56,
+    "functions": 67.85,
+    "lines": 90.29
+  },
+  "umbral_requerido": 80
+}
