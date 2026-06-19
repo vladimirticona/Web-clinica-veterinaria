@@ -1,0 +1,26 @@
+name: MVP Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        run: cd backend && npm ci
+
+      - name: Run Unit Tests with Coverage
+        run: cd backend && npm run test:cov
