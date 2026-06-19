@@ -23,4 +23,4 @@ jobs:
         run: cd backend && npm ci
 
       - name: Run Unit Tests with Coverage
-        run: cd backend && npm run test:cov
+        run: cd backend && npm run test:coverage
