@@ -10,7 +10,7 @@ describe('Mascota', () => {
       id_dueño: 1
     });
     expect(mascota.nombre).toBe('Firulais');
-    expect(mascota.especie).toBe('perro');
+    expect(mascota.especie).toBe('gato');
   });
 
   test('CP02 - crear mascota sin nombre debe lanzar error', () => {
