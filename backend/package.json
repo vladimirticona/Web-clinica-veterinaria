@@ -10,7 +10,7 @@
     "cucumber": "cucumber-js ../features --require ../features/steps/*.steps.js",
     "stryker": "stryker run",
     "dev": "nodemon index.js",
-    "lint": "eslint src/ --ext .js"
+    "lint": "eslint src/"
   },
   "author": "dev.ticma",
   "license": "ISC",
