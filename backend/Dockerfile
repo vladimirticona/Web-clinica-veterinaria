@@ -8,6 +8,7 @@ RUN npm install --production
 
 COPY src/ ./src/
 COPY index.js ./
+COPY tracing.js ./
 
 EXPOSE 3000
 
