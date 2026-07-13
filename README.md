@@ -17,7 +17,7 @@ Esto genera:
 
 ### La Solución
 Una plataforma web moderna que **centraliza y automatiza** todos los procesos:
-- ✅ Gestión integral de pacientes
+- ✅ Gestión integral de las mascotas y dueños
 - ✅ Control digital de inventario
 - ✅ Sistema de agendación de citas
 - ✅ Panel de análisis y reportes
@@ -72,7 +72,7 @@ Node.js        - Runtime JavaScript
 Express.js     - Framework web
 JWT            - Autenticación segura
 Bcryptjs       - Encriptación de contraseñas
-Swagger        - Documentación automática
+Arquitectura Hexagonal (Ports & Adapters)
 ```
 
 ### Base de Datos
@@ -85,7 +85,11 @@ MySQL          - BD relacional
 ```
 Git/GitHub     - Control de versiones
 XAMPP          - Servidor local (desarrollo)
-Swagger        - Informacion de endpoints
+Docker         - Contenedorización
+Kubernetes/Minikube - Orquestación
+GitHub Actions - CI/CD pipeline
+ArgoCD         - GitOps y despliegue continuo
+Prometheus/Grafana - Observabilidad
 ```
 
 ---
@@ -93,65 +97,45 @@ Swagger        - Informacion de endpoints
 ## 📦 Instalación
 
 ### Prerrequisitos
-- Node.js (v14 o superior)
+- Node.js (v18 o superior)
 - MySQL (v5.7 o superior)
 - Git
-- npm o yarn
+- XAMPP (para desarrollo local)
 
 ### 1. Clonar Repositorio
 
 ```bash
 git clone https://github.com/vladimirticona/Web-clinica-veterinaria.git
 cd Web-clinica-veterinaria
+git checkout feat/setup-ci
 ```
 
-### 2. Configurar Backend
+### 2. Configurar Base de Datos
+
+- Abrir XAMPP e iniciar MySQL
+- Ir a `http://localhost/phpmyadmin`
+- Crear base de datos llamada `db_pruebas`
+- Importar el archivo de nuestra carpeta `database/schema.sql`
+
+### 3. Configurar Backend
 
 ```bash
-# Navegar a carpeta backend
 cd backend
-
-# Instalar dependencias
 npm install
-
-# Crear archivo .env
-echo "PORT=3000
-JWT_SECRET=tu_clave_secreta_super_segura_2025
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=db_pruebas" > .env
-
-# Iniciar servidor
 npm start
-```
-
-### 3. Configurar Base de Datos
-
-```bash
-# Abrir XAMPP y iniciar MySQL
-# Ir a http://localhost/phpmyadmin
-# Ejecutar el script SQL
-
 ```
 
 ### 4. Configurar Frontend
 
 ```bash
-# En otra terminal, navegar a carpeta frontend
-cd frontend
-
-# Instalar dependencias
+cd frontend/vite-project
 npm install
-
-# Iniciar servidor de desarrollo
-npm start
+npm run dev
 ```
 
 ### 5. Acceder a la Aplicación
 
 - **Aplicación**: http://localhost:5173/
-- **Documentación API**: http://localhost:3000/api-docs
 - **Base de Datos**: http://localhost/phpmyadmin
 
 ---
@@ -196,103 +180,6 @@ npm start
    - Visualiza gráficos de estadísticas de los datos mas importantes en general
 ---
 
-## 📁 Estructura del Proyecto
-
-```
-clinica-veterinaria/
-├── 📂 frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── App.js
-│   └── package.json
-│
-├── 📂 backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.js
-│   │   │   └── swaggerConfig.js
-│   │   ├── controllers/
-│   │   │   ├── authController.js
-│   │   │   ├── mascotaController.js
-│   │   │   ├── productoController.js
-│   │   │   ├── reservacionController.js
-│   │   │   ├── reporteController.js
-│   │   │   └── perfilController.js
-│   │   ├── routes/
-│   │   │   ├── authRoutes.js
-│   │   │   ├── mascotaRoutes.js
-│   │   │   ├── productoRoutes.js
-│   │   │   ├── reservacionRoutes.js
-│   │   │   ├── reporteRoutes.js
-│   │   │   └── perfilRoutes.js
-│   │   ├── models/
-│   │   │   ├── GenericRepository.js
-│   │   │   ├── mascotaRepository.js
-│   │   │   ├── productoRepository.js
-│   │   │   └── reservacionRepository.js
-│   │   ├── middlewares/
-│   │   │   └── authMiddleware.js
-│   │   └── utils/
-│   │       └── constants.js
-│   ├── app.js
-│   └── package.json
-│
-├── 📂 database/
-│   └── schema.sql
-│
-├── 📄 README.md
-└── 📄 .gitignore
-```
-
----
-
-## 🔌 Endpoints de la API
-
-### Autenticación
-```http
-POST   /auth/registro          - Registrar nuevo usuario
-POST   /auth/login             - Iniciar sesión
-```
-
-### Mascotas
-```http
-GET    /mascotas               - Obtener todas las mascotas
-GET    /mascotas/:id           - Obtener mascota por ID
-POST   /mascotas               - Crear nueva mascota
-PUT    /mascotas/:id           - Actualizar mascota
-DELETE /mascotas/:id           - Eliminar mascota
-```
-
-### Productos
-```http
-GET    /productos              - Obtener todos los productos
-GET    /productos/stock        - Obtener productos con stock
-POST   /productos              - Crear nuevo producto
-PUT    /productos/:id          - Actualizar producto
-DELETE /productos/:id          - Eliminar producto
-```
-
-### Reservaciones
-```http
-GET    /reservaciones          - Obtener todas las citas
-POST   /reservaciones          - Crear nueva cita
-PUT    /reservaciones/:id/estado - Cambiar estado de cita
-DELETE /reservaciones/:id      - Eliminar cita
-```
-
-### Reportes
-```http
-GET    /reportes/estadisticas  - Obtener estadísticas completas
-```
-
-### Perfil
-```http
-PUT    /perfil/actualizar      - Actualizar perfil del usuario
-```
-
-**Documentación interactiva:** http://localhost:3000/api-docs
-
 ---
 
 ## 📊 Objetivos Alcanzados
@@ -314,24 +201,6 @@ PUT    /perfil/actualizar      - Actualizar perfil del usuario
 - **Usuarios Simultáneos**: ∞ (escalable)
 - **Tiempo de Respuesta**: < 200ms
 
----
-
-### Estándares de Código
-Estándar de Codificación Primario: Google JavaScript Style Guide
-Con adaptaciones personalizadas para:
--Desarrollo con Node.js / Express
--Aplicaciones React
--Arquitectura de microservicios
--Seguridad con JWT y bcryptjs
-
-Características Principales:
--Nomenclatura consistente en camelCase
--Documentación JSDoc exhaustiva
--Organización modular clara
--Validación defensiva
--Manejo robusto de errores
--Seguridad en autenticación
--Código auto-documentable
 
 **Hecho con ❤️ para la clínica veterinaria "Mis Patitas"**
 
