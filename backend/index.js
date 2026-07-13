@@ -1,7 +1,8 @@
 require('./tracing');
 const express = require('express');
 const app = express();
-
+const cors = require('cors');
+app.use(cors());
 const MySQLMascotaRepository = require('./src/infrastructure/persistence/MySQLMascotaRepository');
 const MySQLReservacionRepository = require('./src/infrastructure/persistence/MySQLReservacionRepository');
 const MySQLProductoRepository = require('./src/infrastructure/persistence/MySQLProductoRepository');
@@ -18,11 +19,14 @@ const mascotaRoutes = require('./src/infrastructure/http/routes/mascotaRoutes');
 const reservacionRoutes = require('./src/infrastructure/http/routes/reservacionRoutes');
 const productoRoutes = require('./src/infrastructure/http/routes/productoRoutes');
 
+const MySQLDueñoRepository = require('./src/infrastructure/persistence/MySQLDueñoRepository');
+
 const mascotaRepository = new MySQLMascotaRepository();
 const reservacionRepository = new MySQLReservacionRepository();
 const productoRepository = new MySQLProductoRepository();
+const dueñoRepository = new MySQLDueñoRepository();
 
-const mascotaService = new MascotaService(mascotaRepository, null, productoRepository);
+const mascotaService = new MascotaService(mascotaRepository, dueñoRepository, productoRepository);
 const reservacionService = new ReservacionService(reservacionRepository, productoRepository);
 const productoService = new ProductoService(productoRepository);
 
@@ -30,11 +34,14 @@ const mascotaController = new MascotaController(mascotaService);
 const reservacionController = new ReservacionController(reservacionService);
 const productoController = new ProductoController(productoService);
 
+const authRoutes = require('./src/infrastructure/http/routes/authRoutes');
+
 app.use(express.json());
 
 app.use('/mascotas', mascotaRoutes(mascotaController));
 app.use('/reservaciones', reservacionRoutes(reservacionController));
 app.use('/productos', productoRoutes(productoController));
+app.use('/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
